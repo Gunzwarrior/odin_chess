@@ -1,0 +1,2 @@
+This is my attempt at the last Ruby project of TOP's Ruby course.
+I have to build a working chess game in the command line where two people can play against each other (and bonus if I can do it, to great a simple AI so that a player can play against a computer)
