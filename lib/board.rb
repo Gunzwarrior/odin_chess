@@ -30,7 +30,7 @@ class Board
         if element == "\u2B1C" or element == "\u2B1B"
           print element
         else
-          print element.aspect
+          print "\e[30m#{element.aspect}\e[0m"
         end
       end
       puts

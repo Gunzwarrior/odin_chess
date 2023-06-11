@@ -32,3 +32,5 @@ puts king1.aspect
 
 p board1
 board1.pretty_board
+
+# continue playing with the idea of coloring the outlines of pieces with 3x and background with 4x
