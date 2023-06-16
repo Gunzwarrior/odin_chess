@@ -15,7 +15,7 @@ class Bishop < Piece
     if @color == 'white'
       "\e[1;37m \u265d \e[0m"
     else
-      "\e[30m \u265e \e[0m"
+      "\e[30m \u265d \e[0m"
     end
   end
 end
