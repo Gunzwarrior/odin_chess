@@ -8,8 +8,8 @@ require_relative 'queen'
 require_relative 'king'
 require_relative 'board'
 
-puts "You'll soon be able to see a chess board."
-puts "Stay tuned"
+puts "Here is a display of the board at the start of the game"
+puts
 
 player1 = Player.new("One", "white")
 player2 = Player.new("Two", "black")
@@ -18,4 +18,7 @@ board1 = Board.new(player1, player2)
 
 board1.pretty_board
 
-# continue playing with the idea of coloring the outlines of pieces with 3x and background with 4x
+puts
+puts "Soon you will be able to move pieces"
+
+# write a general method to move pieces
