@@ -18,6 +18,18 @@ class Board
     end
   end
 
+  #working on a basic move method
+  def move(start, finish)
+    start_array = start.split("")
+    finish_array = finish.split("")
+    x_hash = { a: 0, b: 1, c: 2, d: 3,
+               e: 4, f: 5, g: 6, h: 7 }
+    y_array = [0, 7, 6, 5, 4, 3, 2, 1, 0]
+    @board[y_array[finish_array[1].to_i]][x_hash[finish_array[0].to_sym]] = @board[y_array[start_array[1].to_i]][x_hash[start_array[0].to_sym]]
+    @board[y_array[start_array[1].to_i]][x_hash[start_array[0].to_sym]] = " "
+    pretty_board
+  end
+
   def pretty_board
     black_first = true
     number_array = %w(8 7 6 5 4 3 2 1)
