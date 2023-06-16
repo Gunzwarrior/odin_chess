@@ -14,27 +14,36 @@ class Board
     8.times { array.push([]) }
     black_first = true
     array.each do |arr|
-      if black_first
-        arr.push("\u2B1B", "\u2B1C", "\u2B1B", "\u2B1C", "\u2B1B", "\u2B1C", "\u2B1B", "\u2B1C")
-        black_first = false
-      else
-        arr.push("\u2B1C", "\u2B1B", "\u2B1C", "\u2B1B", "\u2B1C", "\u2B1B", "\u2B1C", "\u2B1B")
-        black_first = true
-      end
+      8.times { arr.push(" ") }
     end
   end
 
   def pretty_board
+    black_first = true
+    number_array = %w(8 7 6 5 4 3 2 1)
+    number = 0
+    print "   a  b  c  d  e  f  g  h "
+    puts
+
     @board.each do |arr|
+      print "#{number_array[number]} "
       arr.each do |element|
-        if element == "\u2B1C" or element == "\u2B1B"
-          print element
-        else
-          print "\e[30m#{element.aspect}\e[0m"
-        end
+        black_first == true ? background_color = 44 : background_color = 46 
+          if defined?(element.aspect)
+          print "\e[#{background_color}m#{element.aspect}\e[0m"
+          else
+            print "\e[#{background_color};30m#{" "+element+" "}\e[0m"
+          end
+        black_first == true ? black_first = false : black_first = true
       end
+      black_first == true ? black_first = false : black_first = true
+      print " #{number_array[number]}"
+      number += 1
       puts
     end
+
+    print "   a  b  c  d  e  f  g  h "
+    puts
   end
 
   def setup_board

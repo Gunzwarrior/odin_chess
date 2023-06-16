@@ -13,9 +13,9 @@ class Pawn < Piece
 
   def setup_aspect
     if @color == 'white'
-      "\u265f"
+      "\e[1;37m \u265f \e[0m"
     else
-      "\u2659"
+      "\e[30m \u265f \e[0m"
     end
   end
 end

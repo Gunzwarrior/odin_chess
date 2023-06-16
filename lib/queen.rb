@@ -13,9 +13,9 @@ class Queen < Piece
 
   def setup_aspect
     if @color == 'white'
-      "\u265b"
+      "\e[1;37m \u265b \e[0m"
     else
-      "\u2655"
+      "\e[30m \u265b \e[0m"
     end
   end
 end

@@ -13,9 +13,9 @@ class King < Piece
 
   def setup_aspect
     if @color == 'white'
-      "\u265a"
+      "\e[1;37m \u265a \e[0m"
     else
-      "\u2654"
+      "\e[30m \u265a \e[0m"
     end
   end
 end

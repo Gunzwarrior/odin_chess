@@ -13,9 +13,9 @@ class Bishop < Piece
 
   def setup_aspect
     if @color == 'white'
-      "\u265d"
+      "\e[1;37m \u265d \e[0m"
     else
-      "\u2657"
+      "\e[30m \u265e \e[0m"
     end
   end
 end
