@@ -21,6 +21,7 @@ board1.pretty_board
 puts
 puts "Soon you will be able to move pieces"
 
+player1.say_move
 board1.move("a1","a3")
 
 # write a general method to move pieces

@@ -12,7 +12,6 @@ class Board
   def empty_board
     array = []
     8.times { array.push([]) }
-    black_first = true
     array.each do |arr|
       8.times { arr.push(" ") }
     end
