@@ -2,7 +2,7 @@
 
 # Handling the board characteristics
 class Board
-  attr_reader :board, :player2, :player1
+  attr_reader :board, :player2, :player1, :current_player
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
@@ -19,16 +19,31 @@ class Board
   end
 
   def move(start, finish)
-    start_array = start.split("")
-    finish_array = finish.split("")
-    x_hash = { a: 0, b: 1, c: 2, d: 3,
-               e: 4, f: 5, g: 6, h: 7 }
-    y_array = [0, 7, 6, 5, 4, 3, 2, 1, 0]
-    @board[y_array[finish_array[1].to_i]][x_hash[finish_array[0].to_sym]] = @board[y_array[start_array[1].to_i]][x_hash[start_array[0].to_sym]]
-    @board[y_array[start_array[1].to_i]][x_hash[start_array[0].to_sym]] = " "
+    start_array = board_array(start)
+    finish_array = board_array(finish)
+    board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
+    board[start_array[0]][start_array[1]] = ' '
     pretty_board
   end
 
+  def board_array(string)
+    array = string.split("")
+    x_hash = { a: 0, b: 1, c: 2, d: 3,
+               e: 4, f: 5, g: 6, h: 7 }
+    y_array = [0, 7, 6, 5, 4, 3, 2, 1, 0]
+    [y_array[array[1].to_i], x_hash[array[0].to_sym]]
+  end
+
+  def which_color(string)
+    array = board_array(string)
+    board[array[0]][array[1]].color
+  end
+
+  def empty?(string)
+    array = board_array(string)
+    board[array[0]][array[1]] == ' '
+  end
+  
   def pretty_board
     black_first = true
     number_array = %w(8 7 6 5 4 3 2 1)
@@ -85,16 +100,26 @@ array[6] = []
   def game_loop
     loop do
       move_said = current_player.say_move
-      if current_player.valid_move?(move_said)
+      break if move_said == 'exit'
+      if move_validation(move_said)
         move(move_said.split(' ')[0], move_said.split(' ')[1])
-      elsif move_said == "exit"
-        break
+        player_swap
       end
-      player_swap
     end
   end  
 
   def player_swap
     @current_player == player1 ? @current_player = player2 : @current_player = player1
   end 
+
+  def move_validation(move_said)
+    return false unless current_player.valid_move?(move_said)
+    move_array = move_said.split(' ')
+    return false if move_array[0] == move_array[1]
+    return false if empty?(move_array[0])
+    return false if which_color(move_array[0]) != current_player.color
+    return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
+
+    true
+  end
 end
