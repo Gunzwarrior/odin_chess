@@ -7,6 +7,7 @@ class Board
     @player1 = player1
     @player2 = player2
     @board = setup_board
+    @current_player = player1
   end
 
   def empty_board
@@ -17,7 +18,6 @@ class Board
     end
   end
 
-  #working on a basic move method
   def move(start, finish)
     start_array = start.split("")
     finish_array = finish.split("")
@@ -82,4 +82,19 @@ array[6] = []
     array
   end
 
+  def game_loop
+    loop do
+      move_said = current_player.say_move
+      if current_player.valid_move?(move_said)
+        move(move_said.split(' ')[0], move_said.split(' ')[1])
+      elsif move_said == "exit"
+        break
+      end
+      player_swap
+    end
+  end  
+
+  def player_swap
+    @current_player == player1 ? @current_player = player2 : @current_player = player1
+  end 
 end

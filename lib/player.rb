@@ -14,11 +14,14 @@ class Player
   end
 
   def valid_move?(move_said)
-    # move transformed from string to array
-    # check if array length = 5
-    # check if [0] & [3] letters a to h
-    # check if [1] & [4] numbers 1 to 8
-    # not valid if not respected all those criterias
+    move_array = move_said.split("")
+    letter_array = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    number_array = ['1', '2', '3', '4', '5', '6', '7', '8']
+    return false unless move_array.length == 5
+    return false unless letter_array.include?(move_array[0]) && letter_array.include?(move_array[3]) 
+    return false unless number_array.include?(move_array[1]) && number_array.include?(move_array[4]) 
+
+    true
   end
 
 end
