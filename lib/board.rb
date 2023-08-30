@@ -34,6 +34,23 @@ class Board
     [y_array[array[1].to_i], x_hash[array[0].to_sym]]
   end
 
+  def which_piece(string)
+    array = board_array(string)
+    board[array[0]][array[1]].class
+  end
+
+  def which_rule(piece, start, finish)
+    if piece == Rook
+      rule_rook(start, finish)
+    end
+  end
+
+  def rule_rook(start, finish)
+    return true if start[0] == finish[0] || start[1] == finish[1]
+
+    false
+  end
+
   def which_color(string)
     array = board_array(string)
     board[array[0]][array[1]].color
@@ -119,7 +136,7 @@ array[6] = []
     return false if empty?(move_array[0])
     return false if which_color(move_array[0]) != current_player.color
     return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
-
+    return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1])
     true
   end
 end
