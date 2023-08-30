@@ -44,6 +44,8 @@ class Board
       rule_rook(start, finish)
     elsif piece == Bishop
       rule_bishop(start, finish)
+    elsif piece == Queen
+      rule_queen(start,finish)
     end
   end
 
@@ -58,6 +60,13 @@ class Board
     finish_array = board_array(finish)
     return true if diagonal_path?(start_array, finish_array)
 
+    false
+  end
+
+  def rule_queen(start,finish)
+    return true if rule_rook(start,finish)
+    return true if rule_bishop(start,finish)
+    
     false
   end
 
@@ -81,7 +90,7 @@ class Board
   (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
   end
 
-# test the make diagonal path with bishop moves
+# test the make diagonal path once pawn can move
 
   def make_diagonal_path(start, finish)
     path = []
@@ -102,7 +111,6 @@ class Board
       begin_x_number+=1
       begin_y_number+=1
     end
-    p path
     path
   end
 
