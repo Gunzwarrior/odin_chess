@@ -46,6 +46,8 @@ class Board
       rule_bishop(start, finish)
     elsif piece == Queen
       rule_queen(start,finish)
+    elsif piece == Pawn
+      rule_pawn(start,finish)
     end
   end
 
@@ -70,6 +72,19 @@ class Board
     false
   end
 
+  def rule_pawn(start, finish)
+    start_array = board_array(start)
+    finish_array = board_array(finish)
+    number_forward = board[start_array[0]][start_array[1]].color == "white" ? 1 : -1
+    go_forward = start_array[0]-finish_array[0] == number_forward
+    go_one_step_sideway = (start_array[1]-finish_array[1]).abs == 1
+    enemy_present = !empty?(finish) && board[finish_array[0]][finish_array[1]].color != board[start_array[0]][start_array[1]].color
+    return true if start[0] == finish[0] && go_forward && empty?(finish)
+    return true if go_forward && go_one_step_sideway && enemy_present
+
+    false
+  end
+
   def path_blocked?(start, finish)
     start_array = board_array(start)
     finish_array = board_array(finish)
@@ -89,8 +104,6 @@ class Board
   def diagonal_path?(start, finish)
   (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
   end
-
-# test the make diagonal path once pawn can move
 
   def make_diagonal_path(start, finish)
     path = []
@@ -241,7 +254,7 @@ array[6] = []
     return false if which_color(move_array[0]) != current_player.color
     return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
     return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1])
-    #return false if path_blocked?(move_array[0],move_array[1])
+    return false if path_blocked?(move_array[0],move_array[1])
 
     true
   end
