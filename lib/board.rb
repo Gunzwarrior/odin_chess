@@ -51,6 +51,59 @@ class Board
     false
   end
 
+  def path_blocked?(start, finish)
+    start_array = board_array(start)
+    finish_array = board_array(finish)
+
+    if start_array[0] == finish_array[0]
+      path = make_line_path(start_array, finish_array)
+    elsif start_array[1] == finish_array[1]
+      path = make_column_path(start_array, finish_array)
+    end
+    !empty_path?(path)
+  end
+
+  def make_line_path(start, finish)
+    path = []
+    if start[1] < finish[1]
+      begin_number = start[1]
+      end_number = finish[1]
+    else
+      begin_number = finish[1]
+      end_number = start[1]
+    end
+    for i in begin_number...end_number-1
+      path.push([start[0],begin_number+1])
+      begin_number+=1
+    end
+    path
+  end
+
+  def make_column_path(start, finish)
+    path = []
+    if start[0] < finish[0]
+      begin_number = start[0]
+      end_number = finish[0]
+    else
+      begin_number = finish[0]
+      end_number = start[0]
+    end
+    for i in begin_number...end_number-1
+      path.push([begin_number+1, start[1]])
+      begin_number+=1
+    end
+    path
+  end
+
+  def empty_path?(path)
+    return true if path.length.zero?
+
+    path.each do |element|
+      return false unless board[element[0]][element[1]] == ' '
+    end
+    true
+  end
+
   def which_color(string)
     array = board_array(string)
     board[array[0]][array[1]].color
@@ -137,6 +190,8 @@ array[6] = []
     return false if which_color(move_array[0]) != current_player.color
     return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
     return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1])
+    return false if path_blocked?(move_array[0],move_array[1])
+    
     true
   end
 end

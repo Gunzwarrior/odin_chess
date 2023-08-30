@@ -21,5 +21,5 @@ board1.pretty_board
 puts
 puts "Soon you will be able to move pieces"
 
-p board1.board_array("a1")
+p board1.board_array("a2")
 board1.game_loop
