@@ -42,11 +42,21 @@ class Board
   def which_rule(piece, start, finish)
     if piece == Rook
       rule_rook(start, finish)
+    elsif piece == Bishop
+      rule_bishop(start, finish)
     end
   end
 
   def rule_rook(start, finish)
     return true if start[0] == finish[0] || start[1] == finish[1]
+
+    false
+  end
+
+  def rule_bishop(start, finish)
+    start_array = board_array(start)
+    finish_array = board_array(finish)
+    return true if diagonal_path?(start_array, finish_array)
 
     false
   end
@@ -59,8 +69,41 @@ class Board
       path = make_line_path(start_array, finish_array)
     elsif start_array[1] == finish_array[1]
       path = make_column_path(start_array, finish_array)
+    elsif diagonal_path?(start_array, finish_array)
+      path = make_diagonal_path(start_array, finish_array)
+    else
+      false
     end
     !empty_path?(path)
+  end
+
+  def diagonal_path?(start, finish)
+  (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
+  end
+
+# test the make diagonal path with bishop moves
+
+  def make_diagonal_path(start, finish)
+    path = []
+    if start[0] < finish[0]
+      begin_x_number = start[0]
+      end_x_number = finish[0]
+    else
+      begin_x_number = finish[0]
+      end_x_number = start[0]
+    end
+    if start[1] < finish[1]
+      begin_y_number = start[1]
+    else
+      begin_y_number = finish[1]
+    end
+    for i in begin_x_number...end_x_number-1
+      path.push([begin_x_number+1,begin_y_number+1])
+      begin_x_number+=1
+      begin_y_number+=1
+    end
+    p path
+    path
   end
 
   def make_line_path(start, finish)
@@ -190,8 +233,8 @@ array[6] = []
     return false if which_color(move_array[0]) != current_player.color
     return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
     return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1])
-    return false if path_blocked?(move_array[0],move_array[1])
-    
+    #return false if path_blocked?(move_array[0],move_array[1])
+
     true
   end
 end
