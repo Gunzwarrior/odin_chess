@@ -48,6 +48,10 @@ class Board
       rule_queen(start,finish)
     elsif piece == Pawn
       rule_pawn(start,finish)
+    elsif piece == King
+      rule_king(start, finish)
+    elsif piece == Knight
+      rule_knight(start, finish)
     end
   end
 
@@ -85,6 +89,27 @@ class Board
     false
   end
 
+  def rule_king(start, finish)
+    start_array = board_array(start)
+    finish_array = board_array(finish)
+    go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
+    return true if rule_rook(start,finish)
+    return true if rule_bishop(start,finish)
+    return true if go_one_step
+    
+    false
+  end
+
+  def rule_knight(start, finish)
+    start_array = board_array(start)
+    finish_array = board_array(finish)
+    l_shape_path = ((start_array[1]-finish_array[1]).abs == 2 && (start_array[0]-finish_array[0]).abs == 1) ||
+                   ((start_array[1]-finish_array[1]).abs == 1 && (start_array[0]-finish_array[0]).abs == 2)
+    return true if l_shape_path
+
+    false
+  end
+
   def path_blocked?(start, finish)
     start_array = board_array(start)
     finish_array = board_array(finish)
@@ -96,7 +121,7 @@ class Board
     elsif diagonal_path?(start_array, finish_array)
       path = make_diagonal_path(start_array, finish_array)
     else
-      false
+      return false
     end
     !empty_path?(path)
   end
