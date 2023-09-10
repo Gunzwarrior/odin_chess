@@ -21,6 +21,8 @@ class Board
   def move(start, finish)
     start_array = board_array(start)
     finish_array = board_array(finish)
+    p board[start_array[0]][start_array[1]].never_moved
+    board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true
     board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
     board[start_array[0]][start_array[1]] = ' '
     pretty_board
@@ -39,23 +41,28 @@ class Board
     board[array[0]][array[1]].class
   end
 
-  def which_rule(piece, start, finish)
+  def never_moved?(string)
+    array = board_array(string)
+    board[array[0]][array[1]].never_moved
+  end
+
+  def which_rule(piece, start, finish, moved)
     if piece == Rook
-      rule_rook(start, finish)
+      rule_rook(start, finish, moved)
     elsif piece == Bishop
       rule_bishop(start, finish)
     elsif piece == Queen
       rule_queen(start,finish)
     elsif piece == Pawn
-      rule_pawn(start,finish)
+      rule_pawn(start,finish, moved)
     elsif piece == King
-      rule_king(start, finish)
+      rule_king(start, finish, moved)
     elsif piece == Knight
       rule_knight(start, finish)
     end
   end
 
-  def rule_rook(start, finish)
+  def rule_rook(start, finish, moved)
     return true if start[0] == finish[0] || start[1] == finish[1]
 
     false
@@ -76,20 +83,22 @@ class Board
     false
   end
 
-  def rule_pawn(start, finish)
+  def rule_pawn(start, finish, moved)
     start_array = board_array(start)
     finish_array = board_array(finish)
     number_forward = board[start_array[0]][start_array[1]].color == "white" ? 1 : -1
     go_forward = start_array[0]-finish_array[0] == number_forward
+    first_forward = start_array[0]-finish_array[0] == number_forward * 2
     go_one_step_sideway = (start_array[1]-finish_array[1]).abs == 1
     enemy_present = !empty?(finish) && board[finish_array[0]][finish_array[1]].color != board[start_array[0]][start_array[1]].color
+    return true if moved == true && start[0] == finish[0] && first_forward && empty?(finish)
     return true if start[0] == finish[0] && go_forward && empty?(finish)
     return true if go_forward && go_one_step_sideway && enemy_present
 
     false
   end
 
-  def rule_king(start, finish)
+  def rule_king(start, finish, moved)
     start_array = board_array(start)
     finish_array = board_array(finish)
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
@@ -278,7 +287,7 @@ array[6] = []
     return false if empty?(move_array[0])
     return false if which_color(move_array[0]) != current_player.color
     return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
-    return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1])
+    return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
     return false if path_blocked?(move_array[0],move_array[1])
 
     true
