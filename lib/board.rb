@@ -69,6 +69,7 @@ class Board
   end
 
   def rule_bishop(start, finish)
+    # do not work well, to fix
     start_array = board_array(start)
     finish_array = board_array(finish)
     return true if diagonal_path?(start_array, finish_array)
@@ -100,28 +101,50 @@ class Board
 
   def which_rook_castle(finish)
     if finish == 'g1'
-      board_array('h1')
+      'h1'
     elsif finish == 'c1'
-      board_array('a1')
+      'a1'
     elsif finish == 'g8'
-      board_array('h8')
+      'h8'
     elsif finish == 'c8'
-      board_array('a8')
+      'a8'
+    else
+      false
+    end
+  end
+
+  def which_rook_move_castle(string)
+    if string == 'h1'
+      'f1'
+    elsif string == 'a1'
+      'd1'
+    elsif string == 'h8'
+      'f8'
+    elsif string == 'a8'
+      'd8'
     else
       false
     end
   end
 
   def rule_king(start, finish, moved)
+    # fix castling (currently king can't jump over rook)
     start_array = board_array(start)
     finish_array = board_array(finish)
-    rook_castle_array = which_rook_castle(finish)
-    if rook_castle_array
+    rook_castle = which_rook_castle(finish)
+    if rook_castle
+      rook_castle_array = board_array(rook_castle)
+    end
+    if rook_castle_array && board[rook_castle_array[0]][rook_castle_array[1]].class == Rook
       rook_never_moved = board[rook_castle_array[0]][rook_castle_array[1]].never_moved
     end
     go_castle = (start_array[1]-finish_array[1]).abs == 2
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
-    return true if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
+    if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
+      move(rook_castle, which_rook_move_castle(rook_castle))
+      p "rook castled"
+      return true
+    end
     return true if rule_rook(start,finish, moved) && go_one_step
     return true if rule_bishop(start,finish) && go_one_step
     
@@ -155,8 +178,7 @@ class Board
   end
 
   def diagonal_path?(start, finish)
-    p (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
-  (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
+    (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
   end
 
   def make_diagonal_path(start, finish)
