@@ -2,7 +2,7 @@
 
 # Handling the player characteristics and actions
 class Player
-  attr_reader :color
+  attr_reader :color, :name
   
   def initialize(name, color)
     @name = name

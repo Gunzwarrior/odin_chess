@@ -1,7 +1,11 @@
+require_relative 'message'
+
 # frozen_string_literal: true
 
 # Handling the board characteristics
 class Board
+
+  include Message
   attr_reader :board, :player2, :player1, :current_player
   def initialize(player1, player2)
     @player1 = player1
@@ -308,7 +312,9 @@ array[6] = []
   end
 
   def game_loop
+    puts intro
     loop do
+      print player_prompt(current_player.name)
       move_said = current_player.say_move
       break if move_said == 'exit'
       if move_validation(move_said)
