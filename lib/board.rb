@@ -77,7 +77,7 @@ class Board
   end
 
   def rule_queen(start,finish)
-    return true if rule_rook(start,finish)
+    return true if rule_rook(start,finish, true)
     return true if rule_bishop(start,finish)
     
     false
@@ -98,13 +98,32 @@ class Board
     false
   end
 
+  def which_rook_castle(finish)
+    if finish == 'g1'
+      board_array('h1')
+    elsif finish == 'c1'
+      board_array('a1')
+    elsif finish == 'g8'
+      board_array('h8')
+    elsif finish == 'c8'
+      board_array('a8')
+    else
+      false
+    end
+  end
+
   def rule_king(start, finish, moved)
     start_array = board_array(start)
     finish_array = board_array(finish)
+    rook_castle_array = which_rook_castle(finish)
+    if rook_castle_array
+      rook_never_moved = board[rook_castle_array[0]][rook_castle_array[1]].never_moved
+    end
+    go_castle = (start_array[1]-finish_array[1]).abs == 2
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
-    return true if rule_rook(start,finish)
-    return true if rule_bishop(start,finish)
-    return true if go_one_step
+    return true if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
+    return true if rule_rook(start,finish, moved) && go_one_step
+    return true if rule_bishop(start,finish) && go_one_step
     
     false
   end
@@ -136,6 +155,7 @@ class Board
   end
 
   def diagonal_path?(start, finish)
+    p (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
   (start[0]-finish[0]).abs == (start[1]-finish[1]).abs
   end
 
