@@ -35,4 +35,8 @@ module Message
   def path_is_blocked
     "Your path is blocked"
   end
+
+  def wrong_pawn_move
+    "Incorrect pawn move"
+  end
 end

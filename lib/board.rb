@@ -6,12 +6,13 @@ require_relative 'message'
 class Board
 
   include Message
-  attr_reader :board, :player2, :player1, :current_player
+  attr_reader :board, :player2, :player1, :current_player, :en_passant_target
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
     @board = setup_board
     @current_player = player1
+    @en_passant_target = nil
   end
 
   def empty_board
@@ -92,12 +93,22 @@ class Board
     number_forward = board[start_array[0]][start_array[1]].color == "white" ? 1 : -1
     go_forward = start_array[0]-finish_array[0] == number_forward
     first_forward = start_array[0]-finish_array[0] == number_forward * 2
+    first_move_forward = moved == true && start[0] == finish[0] && first_forward && empty?(finish)
     go_one_step_sideway = (start_array[1]-finish_array[1]).abs == 1
     enemy_present = !empty?(finish) && board[finish_array[0]][finish_array[1]].color != board[start_array[0]][start_array[1]].color
-    return true if moved == true && start[0] == finish[0] && first_forward && empty?(finish)
+    en_passant_move = go_forward && go_one_step_sideway && empty?(finish)
+    en_passant_pawn = board[(finish_array[0]+number_forward)][finish_array[1]]
+    if first_move_forward
+      @en_passant_target = board[start_array[0]][start_array[1]]
+      return true
+    end
     return true if start[0] == finish[0] && go_forward && empty?(finish)
     return true if go_forward && go_one_step_sideway && enemy_present
-
+    if en_passant_move && en_passant_pawn == @en_passant_target
+      board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
+      return true
+    end
+    puts wrong_pawn_move
     false
   end
 
@@ -130,7 +141,6 @@ class Board
   end
 
   def rule_king(start, finish, moved)
-    # fix castling (currently king can't jump over rook)
     start_array = board_array(start)
     finish_array = board_array(finish)
     rook_castle = which_rook_castle(finish)
@@ -320,6 +330,9 @@ array[6] = []
       break if move_said == 'exit'
       if move_validation(move_said)
         move(move_said.split(' ')[0], move_said.split(' ')[1])
+        if en_passant_target == nil || current_player.color != @en_passant_target.color
+          @en_passant_target = nil
+        end
         player_swap
       end
     end
