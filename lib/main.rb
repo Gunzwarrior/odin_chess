@@ -13,6 +13,11 @@ player2 = Player.new("Two", "black")
 
 board1 = Board.new(player1, player2)
 
+puts "There is a board, and movable pieces"
+puts "Future features will be :"
+puts "1. More error messages"
+puts "2. A display of the pieces lost"
+
 board1.pretty_board
 
 board1.game_loop
