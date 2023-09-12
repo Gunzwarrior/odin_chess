@@ -2,10 +2,37 @@
 
 module Message
   def intro
-    'Start of the game'
+    <<~START
+    Start of the game
+
+    START
   end
 
   def player_prompt(player)
     "Player #{player} > "
+  end
+
+  def wrong_text
+    'Please enter a move using coordinates (ex : a2 a3)'
+  end
+
+  def wrong_spot
+    "You can't stay on the same spot"
+  end
+
+  def wrong_piece_color
+    "You can't move your opponent's piece"
+  end
+
+  def empty_spot
+    "This square is empty"
+  end
+
+  def same_color
+    "You can't capture your own piece"
+  end
+
+  def path_is_blocked
+    "Your path is blocked"
   end
 end

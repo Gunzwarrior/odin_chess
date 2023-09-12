@@ -25,7 +25,6 @@ class Board
   def move(start, finish)
     start_array = board_array(start)
     finish_array = board_array(finish)
-    p board[start_array[0]][start_array[1]].never_moved
     board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true
     board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
     board[start_array[0]][start_array[1]] = ' '
@@ -146,7 +145,6 @@ class Board
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
     if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
       move(rook_castle, which_rook_move_castle(rook_castle))
-      p "rook castled"
       return true
     end
     return true if rule_rook(start,finish, moved) && go_one_step
@@ -178,6 +176,7 @@ class Board
     else
       return false
     end
+    p path
     !empty_path?(path)
   end
 
@@ -187,22 +186,25 @@ class Board
 
   def make_diagonal_path(start, finish)
     path = []
+    start_y = start[0]
+    start_x = start[1]
     if start[0] < finish[0]
-      begin_x_number = start[0]
-      end_x_number = finish[0]
+      updown_move = 1
     else
-      begin_x_number = finish[0]
-      end_x_number = start[0]
+      updown_move = -1
     end
     if start[1] < finish[1]
-      begin_y_number = start[1]
+      leftright_move = 1
     else
-      begin_y_number = finish[1]
+      leftright_move = -1
     end
-    for i in begin_x_number...end_x_number-1
-      path.push([begin_x_number+1,begin_y_number+1])
-      begin_x_number+=1
-      begin_y_number+=1
+    count = (start[0] - finish[0]).abs
+    (count-1).times do
+      p "start_y = #{start_y}"
+      p "start_x = #{start_x}"
+      path.push([start_y+updown_move,start_x+leftright_move])
+      start_y+=updown_move
+      start_x+=leftright_move
     end
     path
   end
@@ -243,7 +245,10 @@ class Board
     return true if path.length.zero?
 
     path.each do |element|
-      return false unless board[element[0]][element[1]] == ' '
+      unless board[element[0]][element[1]] == ' '
+      puts path_is_blocked
+      return false
+      end
     end
     true
   end
@@ -262,8 +267,8 @@ class Board
     black_first = true
     number_array = %w(8 7 6 5 4 3 2 1)
     number = 0
-    print "   a  b  c  d  e  f  g  h "
     puts
+    puts "   a  b  c  d  e  f  g  h "
 
     @board.each do |arr|
       print "#{number_array[number]} "
@@ -282,7 +287,7 @@ class Board
       puts
     end
 
-    print "   a  b  c  d  e  f  g  h "
+    puts "   a  b  c  d  e  f  g  h "
     puts
   end
 
@@ -328,13 +333,45 @@ array[6] = []
     @current_player == player1 ? @current_player = player2 : @current_player = player1
   end 
 
+  def same_spot(array)
+    if array[0] == array[1]
+      puts wrong_spot
+      return true
+    end
+    false
+  end
+
+  def wrong_color(string)
+    if which_color(string) != current_player.color
+      puts wrong_piece_color
+      return true
+    end
+    false
+  end
+
+  def empty_move(string)
+    if empty?(string)
+      puts empty_spot
+      return true
+    end
+    false
+  end
+
+  def capture_same_color(string)
+    if !empty?(string) && which_color(string) == current_player.color
+      puts same_color
+      return true
+    end
+    false
+  end
+
   def move_validation(move_said)
     return false unless current_player.valid_move?(move_said)
     move_array = move_said.split(' ')
-    return false if move_array[0] == move_array[1]
-    return false if empty?(move_array[0])
-    return false if which_color(move_array[0]) != current_player.color
-    return false if !empty?(move_array[1]) && which_color(move_array[1]) == current_player.color
+    return false if empty_move(move_array[0])
+    return false if wrong_color(move_array[0])
+    return false if same_spot(move_array)
+    return false if capture_same_color(move_array[1])
     return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
     return false if path_blocked?(move_array[0],move_array[1])
 
