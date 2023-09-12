@@ -39,4 +39,12 @@ module Message
   def wrong_pawn_move
     "Incorrect pawn move"
   end
+
+  def promotion_prompt(player)
+    "Pawn promotion for Player #{player} > "
+  end
+
+  def wrong_promotion
+    "Please enter Queen, Rook, Bishop or Knight for your promotion"
+  end
 end

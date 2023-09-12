@@ -322,6 +322,47 @@ array[6] = []
     array
   end
 
+  def promotion(move_said)
+    move_array = move_said.split(' ')
+    promotion_spot = board_array(move_array[1])
+    first_prompt = true
+    loop do
+      if first_prompt
+        print promotion_prompt(current_player.name)
+      else
+        print player_prompt(current_player.name)
+      end
+      choice = gets.chomp
+      if choice.downcase == 'queen'
+        board[promotion_spot[0]][promotion_spot[1]] = Queen.new(current_player)
+        break
+      elsif choice.downcase == 'bishop'
+        board[promotion_spot[0]][promotion_spot[1]] = Bishop.new(current_player)
+        break
+      elsif choice.downcase == 'rook'
+        board[promotion_spot[0]][promotion_spot[1]] = Rook.new(current_player)
+        break
+      elsif choice.downcase == 'knight'
+        board[promotion_spot[0]][promotion_spot[1]] = Knight.new(current_player)
+        break
+      else
+        first_prompt = false
+        puts wrong_promotion
+      end
+    end
+    pretty_board
+  end
+
+  def pawn_promotable(move_said)
+    row = move_said[-1]
+    current_player.color == "white" ? end_row = '8' : end_row = '1'
+    return false unless row == end_row
+    move_array = move_said.split(' ')
+    return false if which_piece(move_array[1]) != Pawn
+
+    true
+  end
+
   def game_loop
     puts intro
     loop do
@@ -333,6 +374,7 @@ array[6] = []
         if en_passant_target == nil || current_player.color != @en_passant_target.color
           @en_passant_target = nil
         end
+        promotion(move_said) if pawn_promotable(move_said)
         player_swap
       end
     end
