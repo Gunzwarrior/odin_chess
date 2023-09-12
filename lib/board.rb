@@ -72,7 +72,6 @@ class Board
   end
 
   def rule_bishop(start, finish)
-    # do not work well, to fix
     start_array = board_array(start)
     finish_array = board_array(finish)
     return true if diagonal_path?(start_array, finish_array)
@@ -176,7 +175,6 @@ class Board
     else
       return false
     end
-    p path
     !empty_path?(path)
   end
 
@@ -200,8 +198,6 @@ class Board
     end
     count = (start[0] - finish[0]).abs
     (count-1).times do
-      p "start_y = #{start_y}"
-      p "start_x = #{start_x}"
       path.push([start_y+updown_move,start_x+leftright_move])
       start_y+=updown_move
       start_x+=leftright_move
@@ -372,8 +368,8 @@ array[6] = []
     return false if wrong_color(move_array[0])
     return false if same_spot(move_array)
     return false if capture_same_color(move_array[1])
-    return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
     return false if path_blocked?(move_array[0],move_array[1])
+    return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
 
     true
   end
