@@ -12,13 +12,11 @@ player1 = Player.new("One", "white")
 player2 = Player.new("Two", "black")
 
 board1 = Board.new(player1, player2)
-
-puts "There is a board, and movable pieces"
-puts "Future features will be :"
-puts "1. A display of the pieces lost"
-
+puts
+puts "There is a board, movable pieces and"
+puts "a display of lost pieces."
+puts "The next big feature will be to handle check."
 board1.pretty_board
 
-puts "\e[30m\u265f\e[0m"
 
 board1.game_loop
