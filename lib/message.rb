@@ -36,8 +36,8 @@ module Message
     "Your path is blocked"
   end
 
-  def wrong_pawn_move
-    "Incorrect pawn move"
+  def wrong_piece_move(piece)
+    "Incorrect #{piece} move"
   end
 
   def promotion_prompt(player)

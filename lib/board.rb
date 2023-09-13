@@ -68,7 +68,6 @@ class Board
 
   def rule_rook(start, finish, moved)
     return true if start[0] == finish[0] || start[1] == finish[1]
-
     false
   end
 
@@ -76,14 +75,12 @@ class Board
     start_array = board_array(start)
     finish_array = board_array(finish)
     return true if diagonal_path?(start_array, finish_array)
-
     false
   end
 
   def rule_queen(start,finish)
     return true if rule_rook(start,finish, true)
     return true if rule_bishop(start,finish)
-    
     false
   end
 
@@ -108,7 +105,6 @@ class Board
       board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
       return true
     end
-    puts wrong_pawn_move
     false
   end
 
@@ -158,7 +154,6 @@ class Board
     end
     return true if rule_rook(start,finish, moved) && go_one_step
     return true if rule_bishop(start,finish) && go_one_step
-    
     false
   end
 
@@ -168,7 +163,6 @@ class Board
     l_shape_path = ((start_array[1]-finish_array[1]).abs == 2 && (start_array[0]-finish_array[0]).abs == 1) ||
                    ((start_array[1]-finish_array[1]).abs == 1 && (start_array[0]-finish_array[0]).abs == 2)
     return true if l_shape_path
-
     false
   end
 
@@ -423,9 +417,13 @@ array[6] = []
     return false if wrong_color(move_array[0])
     return false if same_spot(move_array)
     return false if capture_same_color(move_array[1])
-    return false if path_blocked?(move_array[0],move_array[1])
-    return false unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
-
+    unless which_piece(move_array[0]) == Knight
+      return false if path_blocked?(move_array[0],move_array[1])
+    end
+    unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
+      puts wrong_piece_move(which_piece(move_array[0]))
+      return false
+    end
     true
   end
 end
