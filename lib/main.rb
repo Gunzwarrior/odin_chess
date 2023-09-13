@@ -15,9 +15,10 @@ board1 = Board.new(player1, player2)
 
 puts "There is a board, and movable pieces"
 puts "Future features will be :"
-puts "1. More error messages"
-puts "2. A display of the pieces lost"
+puts "1. A display of the pieces lost"
 
 board1.pretty_board
+
+puts "\e[30m\u265f\e[0m"
 
 board1.game_loop

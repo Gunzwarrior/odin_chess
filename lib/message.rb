@@ -44,6 +44,18 @@ module Message
     "Pawn promotion for Player #{player} > "
   end
 
+  def black_cemetary(array)
+    shape_array = array.map { |piece| piece.aspect.gsub(/[[:space:]]+/, "")}
+    print "  "
+    shape_array.join("")
+  end
+
+  def white_cemetary(array)
+    shape_array = array.map { |piece| piece.aspect.gsub(/[[:space:]]+/, "")}
+    print "  "
+    shape_array.join("")
+  end
+
   def wrong_promotion
     "Please enter Queen, Rook, Bishop or Knight for your promotion"
   end

@@ -6,13 +6,15 @@ require_relative 'message'
 class Board
 
   include Message
-  attr_reader :board, :player2, :player1, :current_player, :en_passant_target
+  attr_reader :board, :player2, :player1, :current_player, :en_passant_target, :black_pieces_lost, :white_pieces_lost
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
     @board = setup_board
     @current_player = player1
     @en_passant_target = nil
+    @black_pieces_lost = []
+    @white_pieces_lost = []
   end
 
   def empty_board
@@ -26,6 +28,13 @@ class Board
   def move(start, finish)
     start_array = board_array(start)
     finish_array = board_array(finish)
+    unless board[finish_array[0]][finish_array[1]] == ' '
+      if board[finish_array[0]][finish_array[1]].color == 'white'
+        @white_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+      else
+        @black_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+      end
+    end
     board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true
     board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
     board[start_array[0]][start_array[1]] = ' '
@@ -102,6 +111,11 @@ class Board
     return true if start[0] == finish[0] && go_forward && empty?(finish)
     return true if go_forward && go_one_step_sideway && enemy_present
     if en_passant_move && en_passant_pawn == @en_passant_target
+      if board[(finish_array[0]+number_forward)][finish_array[1]].color == "white"
+        @white_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
+      else
+        @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
+      end
       board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
       return true
     end
@@ -357,6 +371,13 @@ array[6] = []
     true
   end
 
+  def display_pieces_lost
+    
+      puts black_cemetary(black_pieces_lost) if black_pieces_lost != []
+      puts white_cemetary(white_pieces_lost) if white_pieces_lost != []
+      puts if white_pieces_lost != [] || black_pieces_lost != []
+  end
+
   def game_loop
     puts intro
     loop do
@@ -369,6 +390,7 @@ array[6] = []
           @en_passant_target = nil
         end
         promotion(move_said) if pawn_promotable(move_said)
+        display_pieces_lost
         player_swap
       end
     end
