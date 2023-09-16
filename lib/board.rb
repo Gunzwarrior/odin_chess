@@ -6,7 +6,7 @@ require_relative 'message'
 class Board
 
   include Message
-  attr_reader :board, :player2, :player1, :current_player, :en_passant_target, :black_pieces_lost, :white_pieces_lost
+  attr_reader :board, :player2, :player1, :current_player, :en_passant_target, :black_pieces_lost, :white_pieces_lost, :black_positions, :white_positions
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
@@ -15,6 +15,10 @@ class Board
     @en_passant_target = nil
     @black_pieces_lost = []
     @white_pieces_lost = []
+    @white_positions = ['a2','b2','c2','d2','e2','f2','g2','h2',
+                        'a1','b1','c1','d1','e1','f1','g1','h1']
+    @black_positions = ['a7','b7','c7','d7','e7','f7','g7','h7',
+                        'a7','b7','c7','d7','e7','f7','g7','h7']
   end
 
   def empty_board
@@ -380,6 +384,7 @@ array[6] = []
 
   def game_loop
     puts intro
+    p white_positions
     loop do
       print player_prompt(current_player.name)
       move_said = current_player.say_move
