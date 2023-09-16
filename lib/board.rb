@@ -17,7 +17,7 @@ class Board
     @white_pieces_lost = []
     @white_positions = ['a2','b2','c2','d2','e2','f2','g2','h2',
                         'a1','b1','c1','d1','e1','f1','g1','h1']
-    @black_positions = ['a7','b7','c7','d7','e7','f7','g7','h7',
+    @black_positions = ['a8','b8','c8','d8','e8','f8','g8','h8',
                         'a7','b7','c7','d7','e7','f7','g7','h7']
   end
 
@@ -121,6 +121,14 @@ class Board
         @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
       end
       board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
+      en_passant_y = (finish.split('')[1].to_i - number_forward).to_s
+      en_passant_position_array = [finish.split('')[0],en_passant_y]
+      en_passant_position = en_passant_position_array.join('')
+      if current_player == player1
+        black_positions.delete(en_passant_position) if black_positions.include?(en_passant_position)
+      else
+        white_positions.delete(en_passant_position) if white_positions.include?(en_passant_position)
+      end
       return true
     end
     false
@@ -382,9 +390,20 @@ array[6] = []
       puts if white_pieces_lost != [] || black_pieces_lost != []
   end
 
+  def update_pieces(move_said)
+    start = move_said.split(' ')[0]
+    finish = move_said.split(' ')[1]
+    if current_player == player1
+      white_positions[white_positions.index(start)] = finish
+      black_positions.delete(finish) if black_positions.include?(finish)
+    else
+      black_positions[black_positions.index(start)] = finish
+      white_positions.delete(finish) if white_positions.include?(finish)
+    end
+  end
+
   def game_loop
     puts intro
-    p white_positions
     loop do
       print player_prompt(current_player.name)
       move_said = current_player.say_move
@@ -395,8 +414,11 @@ array[6] = []
           @en_passant_target = nil
         end
         promotion(move_said) if pawn_promotable(move_said)
+        update_pieces(move_said)
         display_pieces_lost
         player_swap
+        p white_positions
+        p black_positions
       end
     end
   end  
