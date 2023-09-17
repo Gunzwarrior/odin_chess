@@ -190,7 +190,7 @@ class Board
     false
   end
 
-  def path_blocked?(start, finish)
+  def path_blocked?(start, finish, move)
     start_array = board_array(start)
     finish_array = board_array(finish)
 
@@ -203,7 +203,7 @@ class Board
     else
       return false
     end
-    !empty_path?(path)
+    !empty_path?(path, move)
   end
 
   def diagonal_path?(start, finish)
@@ -265,12 +265,12 @@ class Board
     path
   end
 
-  def empty_path?(path)
+  def empty_path?(path, move)
     return true if path.length.zero?
 
     path.each do |element|
       unless board[element[0]][element[1]] == ' '
-      puts path_is_blocked
+      puts path_is_blocked if move
       return false
       end
     end
@@ -449,9 +449,8 @@ array[6] = []
         update_pieces(move_said)
         display_pieces_lost
         player_swap
-        p white_positions
-        p black_positions
-        p find_king_position
+        p "king is : #{find_king_position}"
+        p "king is vulnerable ? #{vulnerable_square?(find_king_position)}"
       end
     end
   end  
@@ -492,6 +491,18 @@ array[6] = []
     false
   end
 
+  def vulnerable_square?(square)
+    current_player == player1 ? array = black_positions : array = white_positions
+    array.each do |element|
+      unless element[0].class == Knight
+        next if path_blocked?(element[1],square, false)
+      end
+      next unless which_rule(element[0].class,element[1],square, never_moved?(element[1]))
+      return true
+    end
+    false
+  end
+
   def move_validation(move_said)
     return false unless current_player.valid_move?(move_said)
     move_array = move_said.split(' ')
@@ -500,7 +511,7 @@ array[6] = []
     return false if same_spot(move_array)
     return false if capture_same_color(move_array[1])
     unless which_piece(move_array[0]) == Knight
-      return false if path_blocked?(move_array[0],move_array[1])
+      return false if path_blocked?(move_array[0],move_array[1], true)
     end
     unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
       puts wrong_piece_move(which_piece(move_array[0]))
