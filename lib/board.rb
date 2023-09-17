@@ -15,10 +15,8 @@ class Board
     @en_passant_target = nil
     @black_pieces_lost = []
     @white_pieces_lost = []
-    @white_positions = ['a2','b2','c2','d2','e2','f2','g2','h2',
-                        'a1','b1','c1','d1','e1','f1','g1','h1']
-    @black_positions = ['a8','b8','c8','d8','e8','f8','g8','h8',
-                        'a7','b7','c7','d7','e7','f7','g7','h7']
+    @white_positions = setup_positions(player1)
+    @black_positions = setup_positions(player2)
   end
 
   def empty_board
@@ -125,9 +123,9 @@ class Board
       en_passant_position_array = [finish.split('')[0],en_passant_y]
       en_passant_position = en_passant_position_array.join('')
       if current_player == player1
-        black_positions.delete(en_passant_position) if black_positions.include?(en_passant_position)
+        black_positions.delete(black_positions[find_position(black_positions,en_passant_position)]) unless find_position(black_positions,en_passant_position).nil?
       else
-        white_positions.delete(en_passant_position) if white_positions.include?(en_passant_position)
+        white_positions.delete(white_positions[find_position(white_positions,en_passant_position)]) unless find_position(white_positions,en_passant_position).nil?
       end
       return true
     end
@@ -342,6 +340,24 @@ array[6] = []
     array
   end
 
+  def setup_positions(player)
+    white_array = ['a2','b2','c2','d2','e2','f2','g2','h2',
+      'a1','b1','c1','d1','e1','f1','g1','h1']
+    black_array = ['a8','b8','c8','d8','e8','f8','g8','h8',
+      'a7','b7','c7','d7','e7','f7','g7','h7']
+    
+    if player == player1
+      array = white_array
+    else
+      array = black_array
+    end
+    array.map do |element|
+      piece = board_array(element)
+      [board[piece[0]][piece[1]],element]
+    end
+  end
+
+
   def promotion(move_said)
     move_array = move_said.split(' ')
     promotion_spot = board_array(move_array[1])
@@ -390,20 +406,27 @@ array[6] = []
       puts if white_pieces_lost != [] || black_pieces_lost != []
   end
 
+  def find_position(array, string)
+    array.index { |element| element[1] == string }
+  end
+
+
   def update_pieces(move_said)
     start = move_said.split(' ')[0]
     finish = move_said.split(' ')[1]
     if current_player == player1
-      white_positions[white_positions.index(start)] = finish
-      black_positions.delete(finish) if black_positions.include?(finish)
+      white_positions[find_position(white_positions, start)][1] = finish
+      black_positions.delete(black_positions[find_position(black_positions,finish)]) unless find_position(black_positions,finish).nil?
     else
-      black_positions[black_positions.index(start)] = finish
-      white_positions.delete(finish) if white_positions.include?(finish)
+      black_positions[find_position(black_positions, start)][1] = finish
+      white_positions.delete(white_positions[find_position(white_positions,finish)]) unless find_position(white_positions,finish).nil?
     end
   end
 
   def game_loop
     puts intro
+    p white_positions
+    p black_positions
     loop do
       print player_prompt(current_player.name)
       move_said = current_player.say_move
