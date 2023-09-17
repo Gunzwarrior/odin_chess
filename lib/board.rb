@@ -410,6 +410,17 @@ array[6] = []
     array.index { |element| element[1] == string }
   end
 
+  def find_king_position
+    if current_player == player1
+      index = white_positions.index { |element| element[0].class == King}
+      white_positions[index][1]
+    else
+      index = black_positions.index { |element| element[0].class == King}
+      black_positions[index][1]
+    end
+
+  end
+
 
   def update_pieces(move_said)
     start = move_said.split(' ')[0]
@@ -425,8 +436,6 @@ array[6] = []
 
   def game_loop
     puts intro
-    p white_positions
-    p black_positions
     loop do
       print player_prompt(current_player.name)
       move_said = current_player.say_move
@@ -442,6 +451,7 @@ array[6] = []
         player_swap
         p white_positions
         p black_positions
+        p find_king_position
       end
     end
   end  
