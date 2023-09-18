@@ -59,4 +59,13 @@ module Message
   def wrong_promotion
     "Please enter Queen, Rook, Bishop or Knight for your promotion"
   end
+
+  def check(color)
+    "#{color.capitalize} King in check"
+  end
+
+  def wrong_check
+    "Incorrect move, King still in check"
+  end
+
 end

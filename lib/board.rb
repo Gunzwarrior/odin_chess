@@ -6,7 +6,7 @@ require_relative 'message'
 class Board
 
   include Message
-  attr_reader :board, :player2, :player1, :current_player, :en_passant_target, :black_pieces_lost, :white_pieces_lost, :black_positions, :white_positions
+  attr_reader :board, :player2, :player1, :current_player, :en_passant_target, :black_pieces_lost, :white_pieces_lost, :black_positions, :white_positions, :king_check
   def initialize(player1, player2)
     @player1 = player1
     @player2 = player2
@@ -17,6 +17,7 @@ class Board
     @white_pieces_lost = []
     @white_positions = setup_positions(player1)
     @black_positions = setup_positions(player2)
+    @king_check = false
   end
 
   def empty_board
@@ -27,20 +28,22 @@ class Board
     end
   end
 
-  def move(start, finish)
+  def move(start, finish, real)
     start_array = board_array(start)
     finish_array = board_array(finish)
-    unless board[finish_array[0]][finish_array[1]] == ' '
-      if board[finish_array[0]][finish_array[1]].color == 'white'
-        @white_pieces_lost.push(board[finish_array[0]][finish_array[1]])
-      else
-        @black_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+    if real
+      unless board[finish_array[0]][finish_array[1]] == ' '
+        if board[finish_array[0]][finish_array[1]].color == 'white'
+          @white_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+        else
+         @black_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+        end
       end
     end
     board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true
     board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
     board[start_array[0]][start_array[1]] = ' '
-    pretty_board
+    pretty_board if real
   end
 
   def board_array(string)
@@ -173,7 +176,7 @@ class Board
     go_castle = (start_array[1]-finish_array[1]).abs == 2
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
     if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
-      move(rook_castle, which_rook_move_castle(rook_castle))
+      move(rook_castle, which_rook_move_castle(rook_castle), true)
       return true
     end
     return true if rule_rook(start,finish, moved) && go_one_step
@@ -441,7 +444,7 @@ array[6] = []
       move_said = current_player.say_move
       break if move_said == 'exit'
       if move_validation(move_said)
-        move(move_said.split(' ')[0], move_said.split(' ')[1])
+        move(move_said.split(' ')[0], move_said.split(' ')[1], true)
         if en_passant_target == nil || current_player.color != @en_passant_target.color
           @en_passant_target = nil
         end
@@ -449,8 +452,13 @@ array[6] = []
         update_pieces(move_said)
         display_pieces_lost
         player_swap
-        p "king is : #{find_king_position}"
-        p "king is vulnerable ? #{vulnerable_square?(find_king_position)}"
+        if vulnerable_square?(find_king_position)
+          puts check(current_player.color)
+          puts
+          @king_check = true
+        else
+          @king_check = false
+        end 
       end
     end
   end  
@@ -503,6 +511,25 @@ array[6] = []
     false
   end
 
+  def still_check(array)
+    temp_board = []
+    board.each { |element| temp_board.push(element.dup)}
+    temp_white_positions = []
+    white_positions.each { |element| temp_white_positions.push(element.dup)}
+    temp_black_positions = []
+    black_positions.each { |element| temp_black_positions.push(element.dup)}
+    move(array[0],array[1],false)
+    update_pieces(array.join(' '))
+    result = vulnerable_square?(find_king_position)
+    @board = temp_board
+    @white_positions = temp_white_positions
+    @black_positions = temp_black_positions
+    if result
+      puts wrong_check
+      result
+    end
+  end
+
   def move_validation(move_said)
     return false unless current_player.valid_move?(move_said)
     move_array = move_said.split(' ')
@@ -517,6 +544,10 @@ array[6] = []
       puts wrong_piece_move(which_piece(move_array[0]))
       return false
     end
+    if king_check
+      return false if still_check(move_array)
+    end
+
     true
   end
 end
