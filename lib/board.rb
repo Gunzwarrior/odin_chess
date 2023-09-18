@@ -524,10 +524,7 @@ array[6] = []
     @board = temp_board
     @white_positions = temp_white_positions
     @black_positions = temp_black_positions
-    if result
-      puts wrong_check
-      result
-    end
+    result
   end
 
   def move_validation(move_said)
@@ -544,9 +541,15 @@ array[6] = []
       puts wrong_piece_move(which_piece(move_array[0]))
       return false
     end
-    if king_check
-      return false if still_check(move_array)
+    if still_check(move_array)
+      if king_check
+        puts wrong_check
+      else
+        puts cannot_check
+      end
+      return false
     end
+
 
     true
   end

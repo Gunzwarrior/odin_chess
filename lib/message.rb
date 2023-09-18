@@ -68,4 +68,8 @@ module Message
     "Incorrect move, King still in check"
   end
 
+  def cannot_check
+    "Incorrect move, puts own King in check"
+  end
+
 end
