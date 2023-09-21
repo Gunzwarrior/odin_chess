@@ -199,7 +199,7 @@ class Board
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
     if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
       unless castling_through_check?(finish)
-        move(rook_castle, which_rook_move_castle(rook_castle), true)
+        move(rook_castle, which_rook_move_castle(rook_castle), false)
         update_pieces(rook_castle+' '+which_rook_move_castle(rook_castle))
         return true
       end
