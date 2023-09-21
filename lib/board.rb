@@ -163,6 +163,28 @@ class Board
     end
   end
 
+  def king_castle_path(finish)
+    if finish == 'g1'
+      ['e1', 'f1', 'g1']
+    elsif finish == 'c1'
+      ['e1', 'd1', 'c1']
+    elsif finish == 'g8'
+      ['e8', 'f8', 'g8']
+    elsif finish == 'c8'
+      ['e8', 'd8', 'c8']
+    else
+      false
+    end
+  end
+
+  def castling_through_check?(finish)
+    array = king_castle_path(finish)
+    array.each do |element|
+    return true if vulnerable_square?(element)
+    end
+    false
+  end
+
   def rule_king(start, finish, moved)
     start_array = board_array(start)
     finish_array = board_array(finish)
@@ -176,9 +198,11 @@ class Board
     go_castle = (start_array[1]-finish_array[1]).abs == 2
     go_one_step = (start_array[1]-finish_array[1]).abs <= 1 && (start_array[0]-finish_array[0]).abs <= 1
     if moved == true && rule_rook(start, finish, moved) && go_castle && rook_never_moved
-      move(rook_castle, which_rook_move_castle(rook_castle), true)
-      update_pieces(rook_castle+' '+which_rook_move_castle(rook_castle))
-      return true
+      unless castling_through_check?(finish)
+        move(rook_castle, which_rook_move_castle(rook_castle), true)
+        update_pieces(rook_castle+' '+which_rook_move_castle(rook_castle))
+        return true
+      end
     end
     return true if rule_rook(start,finish, moved) && go_one_step
     return true if rule_bishop(start,finish) && go_one_step
@@ -550,8 +574,6 @@ array[6] = []
       end
       return false
     end
-
-
     true
   end
 end
