@@ -490,7 +490,6 @@ array[6] = []
   end  
 
   def board_to_coordinates(array)
-    #take board array and translate it to coordinates
     x_hash = { a: 0, b: 1, c: 2, d: 3,
                e: 4, f: 5, g: 6, h: 7 }
     y_array = [0, 7, 6, 5, 4, 3, 2, 1, 0]
@@ -517,6 +516,17 @@ array[6] = []
     result.push(board_to_coordinates([forward1, sideway_right])) if forward1 >= 0 && forward1 <= 7 && sideway_right >= 0 && sideway_right <= 7
 
     result
+  end
+
+  def checkmate_array(color)
+    result = []
+    color == 'white' ? base_array = white_positions : base_array = black_positions
+    base_array.each do |element|
+      if element[0].class == Pawn
+        result.push([element[1], possible_pawn_move(element[0],element[1])])
+      end
+    end
+    p result
   end
 
   def checkmate?
