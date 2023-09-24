@@ -504,49 +504,19 @@ array[6] = []
   end
 
   def possible_pawn_move(piece, start)
-    # forward 1, 2
-    # sideway left and right
-    # array of possible moves
-    # use some of what is under this to obtain the array
     start_array = board_array(start)
     result = []
+    number_forward = piece.color == "white" ? 1 : -1
     forward1 = start_array[0] - number_forward
     forward2 = forward1 - number_forward
+    sideway_left = start_array[1] - 1
+    sideway_right = start_array[1] + 1
+    result.push(board_to_coordinates([forward1, start_array[1]])) if forward1 >= 0 && forward1 <= 7
+    result.push(board_to_coordinates([forward2, start_array[1]])) if forward2 >= 0 && forward2 <= 7
+    result.push(board_to_coordinates([forward1, sideway_left])) if forward1 >= 0 && forward1 <= 7 && sideway_left >= 0 && sideway_left <= 7
+    result.push(board_to_coordinates([forward1, sideway_right])) if forward1 >= 0 && forward1 <= 7 && sideway_right >= 0 && sideway_right <= 7
 
- 
-
-    number_forward = piece.color == "white" ? 1 : -1
-    go_forward = start_array[0]-finish_array[0] == number_forward
-    first_forward = start_array[0]-finish_array[0] == number_forward * 2
-    first_move_forward = moved == true && start[0] == finish[0] && first_forward && empty?(finish)
-    go_one_step_sideway = (start_array[1]-finish_array[1]).abs == 1
-    enemy_present = !empty?(finish) && board[finish_array[0]][finish_array[1]].color != board[start_array[0]][start_array[1]].color
-    en_passant_move = go_forward && go_one_step_sideway && empty?(finish)
-    en_passant_pawn = board[(finish_array[0]+number_forward)][finish_array[1]]
-    if first_move_forward
-      @en_passant_target = board[start_array[0]][start_array[1]]
-      return true
-    end
-    return true if start[0] == finish[0] && go_forward && empty?(finish)
-    return true if go_forward && go_one_step_sideway && enemy_present
-    if en_passant_move && en_passant_pawn == @en_passant_target
-      if board[(finish_array[0]+number_forward)][finish_array[1]].color == "white"
-        @white_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
-      else
-        @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
-      end
-      board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
-      en_passant_y = (finish.split('')[1].to_i - number_forward).to_s
-      en_passant_position_array = [finish.split('')[0],en_passant_y]
-      en_passant_position = en_passant_position_array.join('')
-      if current_player == player1
-        black_positions.delete(black_positions[find_position(black_positions,en_passant_position)]) unless find_position(black_positions,en_passant_position).nil?
-      else
-        white_positions.delete(white_positions[find_position(white_positions,en_passant_position)]) unless find_position(white_positions,en_passant_position).nil?
-      end
-      return true
-    end
-    false
+    result
   end
 
   def checkmate?
