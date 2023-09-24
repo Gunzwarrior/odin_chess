@@ -481,12 +481,79 @@ array[6] = []
           puts check(current_player.color)
           puts
           @king_check = true
+          # break if checkmate()
         else
           @king_check = false
         end 
       end
     end
   end  
+
+  def board_to_coordinates(array)
+    #take board array and translate it to coordinates
+    x_hash = { a: 0, b: 1, c: 2, d: 3,
+               e: 4, f: 5, g: 6, h: 7 }
+    y_array = [0, 7, 6, 5, 4, 3, 2, 1, 0]
+    letter = x_hash.key(array[1]).to_s
+    if array[0] == 0
+      number = '8'
+    else
+      number = y_array.index(array[0]).to_s
+    end
+    letter+number
+  end
+
+  def possible_pawn_move(piece, start)
+    # forward 1, 2
+    # sideway left and right
+    # array of possible moves
+    # use some of what is under this to obtain the array
+    start_array = board_array(start)
+    result = []
+    forward1 = start_array[0] - number_forward
+    forward2 = forward1 - number_forward
+
+ 
+
+    number_forward = piece.color == "white" ? 1 : -1
+    go_forward = start_array[0]-finish_array[0] == number_forward
+    first_forward = start_array[0]-finish_array[0] == number_forward * 2
+    first_move_forward = moved == true && start[0] == finish[0] && first_forward && empty?(finish)
+    go_one_step_sideway = (start_array[1]-finish_array[1]).abs == 1
+    enemy_present = !empty?(finish) && board[finish_array[0]][finish_array[1]].color != board[start_array[0]][start_array[1]].color
+    en_passant_move = go_forward && go_one_step_sideway && empty?(finish)
+    en_passant_pawn = board[(finish_array[0]+number_forward)][finish_array[1]]
+    if first_move_forward
+      @en_passant_target = board[start_array[0]][start_array[1]]
+      return true
+    end
+    return true if start[0] == finish[0] && go_forward && empty?(finish)
+    return true if go_forward && go_one_step_sideway && enemy_present
+    if en_passant_move && en_passant_pawn == @en_passant_target
+      if board[(finish_array[0]+number_forward)][finish_array[1]].color == "white"
+        @white_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
+      else
+        @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
+      end
+      board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
+      en_passant_y = (finish.split('')[1].to_i - number_forward).to_s
+      en_passant_position_array = [finish.split('')[0],en_passant_y]
+      en_passant_position = en_passant_position_array.join('')
+      if current_player == player1
+        black_positions.delete(black_positions[find_position(black_positions,en_passant_position)]) unless find_position(black_positions,en_passant_position).nil?
+      else
+        white_positions.delete(white_positions[find_position(white_positions,en_passant_position)]) unless find_position(white_positions,en_passant_position).nil?
+      end
+      return true
+    end
+    false
+  end
+
+  def checkmate?
+    #make an array of all possible moves
+    # return false unless array.each stillcheck?
+    # true
+  end
 
   def player_swap
     @current_player == player1 ? @current_player = player2 : @current_player = player1

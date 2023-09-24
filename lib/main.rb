@@ -18,5 +18,4 @@ puts "a display of lost pieces."
 puts "The next big feature will be to handle check."
 board1.pretty_board
 
-
 board1.game_loop
