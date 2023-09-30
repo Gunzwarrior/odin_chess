@@ -518,13 +518,33 @@ array[6] = []
     result
   end
 
+  def possible_rook_move(start)
+    #possible moves for a rook
+    start_array = start.split('')
+    letter_array = ['a','b','c','d','e','f','g','h']
+    number_array = ['1','2','3','4','5','6','7','8']
+    x_moves = []
+    y_moves = []
+    letter_array.each {|letter| x_moves.push(letter+start_array[1])}
+    number_array.each { |number| y_moves.push(start_array[0]+number)}
+    result = x_moves+y_moves
+    result.delete(start)
+    result
+  end
+
+  def checkmate_rule_selector(piece,coordinates)
+    if piece.class == Pawn
+      possible_pawn_move(piece, coordinates)
+    elsif piece.class == Rook
+      possible_rook_move(coordinates)
+    end
+  end
+
   def checkmate_array(color)
     result = []
     color == 'white' ? base_array = white_positions : base_array = black_positions
     base_array.each do |element|
-      if element[0].class == Pawn
-        result.push([element[1], possible_pawn_move(element[0],element[1])])
-      end
+      result.push([element[1], checkmate_rule_selector(element[0],element[1])])
     end
     p result
   end
