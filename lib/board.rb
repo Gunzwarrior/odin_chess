@@ -548,6 +548,18 @@ array[6] = []
     end_result
   end
 
+  def possible_knight_move(start)
+    start_array = board_array(start)
+    possible = [[start_array[0]+1,start_array[1]+2], [start_array[0]+1,start_array[1]-2],
+                [start_array[0]-1,start_array[1]+2], [start_array[0]-1,start_array[1]-2],
+                [start_array[0]+2,start_array[1]+1], [start_array[0]+2,start_array[1]-1],
+                [start_array[0]-2,start_array[1]+1], [start_array[0]-2,start_array[1]-1]]
+    result = possible.map {|element| board_to_coordinates(element)}
+    end_result = []
+    result.each { |element| end_result.push(element) if element.length == 2}
+    end_result
+  end
+
   def checkmate_rule_selector(piece,coordinates)
     if piece.class == Pawn
       possible_pawn_move(piece, coordinates)
@@ -555,6 +567,8 @@ array[6] = []
       possible_rook_move(coordinates)
     elsif piece.class == King
       possible_king_move(coordinates)
+    elsif piece.class == Knight
+      possible_knight_move(coordinates)
     end
   end
 
