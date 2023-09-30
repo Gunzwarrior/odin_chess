@@ -519,7 +519,6 @@ array[6] = []
   end
 
   def possible_rook_move(start)
-    #possible moves for a rook
     start_array = start.split('')
     letter_array = ['a','b','c','d','e','f','g','h']
     number_array = ['1','2','3','4','5','6','7','8']
@@ -532,11 +531,30 @@ array[6] = []
     result
   end
 
+  def possible_king_move(start)
+    start_array = board_array(start)
+    y_possible = [start_array[0], start_array[0]-1, start_array[0]+1]
+    x_possible = [start_array[1], start_array[1]-1, start_array[1]+1]
+    possible = []
+    y_possible.each do |x|
+      x_possible.each do |y|
+        possible.push([x,y])
+      end
+    end
+    result = possible.map {|element| board_to_coordinates(element)}
+    result.delete(start)
+    end_result = []
+    result.each { |element| end_result.push(element) if element.length == 2}
+    end_result
+  end
+
   def checkmate_rule_selector(piece,coordinates)
     if piece.class == Pawn
       possible_pawn_move(piece, coordinates)
     elsif piece.class == Rook
       possible_rook_move(coordinates)
+    elsif piece.class == King
+      possible_king_move(coordinates)
     end
   end
 
