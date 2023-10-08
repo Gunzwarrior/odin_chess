@@ -72,6 +72,10 @@ module Message
     end
   end
 
+  def stalemate
+    "Draw, stalemate."
+  end
+
   def wrong_check
     "Incorrect move, King still in check"
   end

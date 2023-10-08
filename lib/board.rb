@@ -487,7 +487,11 @@ array[6] = []
           end
         else
           @king_check = false
-        end 
+          if checkmate?(current_player.color)
+            puts stalemate
+            break
+          end
+        end
       end
     end
   end  
