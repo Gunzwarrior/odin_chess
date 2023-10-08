@@ -596,6 +596,12 @@ array[6] = []
     result.map { |element| board_to_coordinates(element)}
   end
 
+  def possible_queen_move(start)
+    result = possible_rook_move(start) + possible_bishop_move(start)
+    p result
+
+  end
+
   def checkmate_rule_selector(piece,coordinates)
     if piece.class == Pawn
       possible_pawn_move(piece, coordinates)
@@ -607,6 +613,8 @@ array[6] = []
       possible_knight_move(coordinates)
     elsif piece.class == Bishop
       possible_bishop_move(coordinates)
+    elsif piece.class == Queen
+      possible_queen_move(coordinates)
     end
   end
 
