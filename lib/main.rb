@@ -13,8 +13,8 @@ player2 = Player.new("Two", "black")
 
 board1 = Board.new(player1, player2)
 puts
-puts "There is a board, movable pieces and"
-puts "a display of lost pieces."
-puts "The next big feature will be to handle check."
+puts "The game is playable with two players"
+puts "The next big feature will be to be able"
+puts "to save and load your game"
 board1.pretty_board
 board1.game_loop
