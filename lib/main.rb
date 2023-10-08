@@ -17,6 +17,4 @@ puts "There is a board, movable pieces and"
 puts "a display of lost pieces."
 puts "The next big feature will be to handle check."
 board1.pretty_board
-board1.checkmate_array('white')
-board1.checkmate_array('lol')
 board1.game_loop

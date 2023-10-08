@@ -481,7 +481,10 @@ array[6] = []
           puts check(current_player.color)
           puts
           @king_check = true
-          # break if checkmate()
+          if checkmate?(current_player.color)
+            puts checkmate(current_player.color)
+            break
+          end
         else
           @king_check = false
         end 
@@ -598,7 +601,7 @@ array[6] = []
 
   def possible_queen_move(start)
     result = possible_rook_move(start) + possible_bishop_move(start)
-    p result
+    result
 
   end
 
@@ -624,13 +627,19 @@ array[6] = []
     base_array.each do |element|
       result.push([element[1], checkmate_rule_selector(element[0],element[1])])
     end
-    p result
+    result
   end
 
-  def checkmate?
-    #make an array of all possible moves
-    # return false unless array.each stillcheck?
-    # true
+  def checkmate?(color)
+    array = checkmate_array(color)
+    array.each do |element|
+      element[1].each do |elem|
+        if check_move_validation([element[0],elem])
+          return false unless still_check([element[0],elem])
+        end
+      end
+    end
+    true
   end
 
   def player_swap
@@ -695,6 +704,18 @@ array[6] = []
     @white_positions = temp_white_positions
     @black_positions = temp_black_positions
     result
+  end
+
+  def check_move_validation(move_array)
+    return false if capture_same_color(move_array[1])
+    unless which_piece(move_array[0]) == Knight
+      return false if path_blocked?(move_array[0],move_array[1], true)
+    end
+    unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
+      puts wrong_piece_move(which_piece(move_array[0]))
+      return false
+    end
+    true
   end
 
   def move_validation(move_said)

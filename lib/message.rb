@@ -64,6 +64,14 @@ module Message
     "#{color.capitalize} King in check"
   end
 
+  def checkmate(color)
+    if color == 'white'
+      "Checkmate, Black wins."
+    else
+      "Checkmate, White wins."
+    end
+  end
+
   def wrong_check
     "Incorrect move, King still in check"
   end
