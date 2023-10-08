@@ -634,7 +634,7 @@ array[6] = []
     array = checkmate_array(color)
     array.each do |element|
       element[1].each do |elem|
-        if check_move_validation([element[0],elem])
+        if check_move_validation([element[0],elem],false)
           return false unless still_check([element[0],elem])
         end
       end
@@ -670,9 +670,9 @@ array[6] = []
     false
   end
 
-  def capture_same_color(string)
+  def capture_same_color(string, check_test)
     if !empty?(string) && which_color(string) == current_player.color
-      puts same_color
+      puts same_color if check_test 
       return true
     end
     false
@@ -706,13 +706,12 @@ array[6] = []
     result
   end
 
-  def check_move_validation(move_array)
-    return false if capture_same_color(move_array[1])
+  def check_move_validation(move_array, check_test)
+    return false if capture_same_color(move_array[1], check_test)
     unless which_piece(move_array[0]) == Knight
-      return false if path_blocked?(move_array[0],move_array[1], true)
+      return false if path_blocked?(move_array[0],move_array[1], false)
     end
     unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
-      puts wrong_piece_move(which_piece(move_array[0]))
       return false
     end
     true
@@ -724,7 +723,7 @@ array[6] = []
     return false if empty_move(move_array[0])
     return false if wrong_color(move_array[0])
     return false if same_spot(move_array)
-    return false if capture_same_color(move_array[1])
+    return false if capture_same_color(move_array[1], true)
     unless which_piece(move_array[0]) == Knight
       return false if path_blocked?(move_array[0],move_array[1], true)
     end
