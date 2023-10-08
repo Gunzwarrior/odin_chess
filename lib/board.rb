@@ -560,6 +560,42 @@ array[6] = []
     end_result
   end
 
+  def possible_bishop_move(start)
+    start_array = board_array(start)
+    result = []
+    start_y = start_array[0]
+    start_x = start_array[1]
+    y_temp = start_y
+    x_temp = start_x
+    while y_temp < 7 && x_temp < 7
+      y_temp +=1
+      x_temp +=1
+      result.push([y_temp,x_temp])
+    end
+    y_temp = start_y
+    x_temp = start_x
+    while y_temp > 0 && x_temp > 0
+      y_temp -=1
+      x_temp -=1
+      result.push([y_temp,x_temp])
+    end
+    y_temp = start_y
+    x_temp = start_x
+    while y_temp < 7 && x_temp > 0
+      y_temp +=1
+      x_temp -=1
+      result.push([y_temp,x_temp])
+    end
+    y_temp = start_y
+    x_temp = start_x
+    while y_temp > 0 && x_temp < 7
+      y_temp -=1
+      x_temp +=1
+      result.push([y_temp,x_temp])
+    end
+    result.map { |element| board_to_coordinates(element)}
+  end
+
   def checkmate_rule_selector(piece,coordinates)
     if piece.class == Pawn
       possible_pawn_move(piece, coordinates)
@@ -569,6 +605,8 @@ array[6] = []
       possible_king_move(coordinates)
     elsif piece.class == Knight
       possible_knight_move(coordinates)
+    elsif piece.class == Bishop
+      possible_bishop_move(coordinates)
     end
   end
 
