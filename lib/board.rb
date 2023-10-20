@@ -1,4 +1,5 @@
 require_relative 'message'
+require 'json'
 
 # frozen_string_literal: true
 
@@ -462,12 +463,41 @@ array[6] = []
     end
   end
 
+  def save_game
+    serialized_state = serialize_state
+    Dir.mkdir('saved_game') unless Dir.exist?('saved_game')
+    save_file = 'saved_game/save.txt'
+    File.open(save_file, 'w') do |file|
+      file.puts(serialized_state)
+    end
+  end
+
+  def serialize_state
+    saved_data_hash = {
+      board: board,
+      player2: player2,
+      player1: player1,
+      current_player: current_player,
+      en_passant_target: en_passant_target,
+      black_pieces_lost: black_pieces_lost,
+      white_pieces_lost: white_pieces_lost,
+      black_positions: black_positions,
+      white_positions: white_positions,
+      king_check: king_check
+    }
+    JSON.dump(saved_data_hash)
+  end
+
   def game_loop
     puts intro
     loop do
       print player_prompt(current_player.name)
       move_said = current_player.say_move
       break if move_said == 'exit'
+      if move_said == 'save'
+        save_game
+        break
+      end
       if move_validation(move_said)
         move(move_said.split(' ')[0], move_said.split(' ')[1], true)
         if en_passant_target == nil || current_player.color != @en_passant_target.color
