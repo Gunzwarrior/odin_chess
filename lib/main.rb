@@ -16,5 +16,5 @@ puts
 puts "The game is playable with two players"
 puts "The next big feature will be to be able"
 puts "to save and load your game"
-board1.pretty_board
-board1.game_loop
+p board1.board
+board1.launch_game

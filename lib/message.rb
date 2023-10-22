@@ -45,13 +45,13 @@ module Message
   end
 
   def black_cemetary(array)
-    shape_array = array.map { |piece| piece.aspect.gsub(/[[:space:]]+/, "")}
+    shape_array = array.map { |piece| piece.gsub(/[[:space:]]+/, "")}
     print "  "
     shape_array.join("")
   end
 
   def white_cemetary(array)
-    shape_array = array.map { |piece| piece.aspect.gsub(/[[:space:]]+/, "")}
+    shape_array = array.map { |piece| piece.gsub(/[[:space:]]+/, "")}
     print "  "
     shape_array.join("")
   end
@@ -82,6 +82,10 @@ module Message
 
   def cannot_check
     "Incorrect move, puts own King in check"
+  end
+
+  def new_or_load
+    "Enter 1 for a new game or 2 to load a previous game"
   end
 
 end

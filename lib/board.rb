@@ -35,9 +35,9 @@ class Board
     if real
       unless board[finish_array[0]][finish_array[1]] == ' '
         if board[finish_array[0]][finish_array[1]].color == 'white'
-          @white_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+          @white_pieces_lost.push(board[finish_array[0]][finish_array[1]].aspect)
         else
-         @black_pieces_lost.push(board[finish_array[0]][finish_array[1]])
+         @black_pieces_lost.push(board[finish_array[0]][finish_array[1]].aspect)
         end
       end
     end
@@ -118,9 +118,9 @@ class Board
     return true if go_forward && go_one_step_sideway && enemy_present
     if en_passant_move && en_passant_pawn == @en_passant_target
       if board[(finish_array[0]+number_forward)][finish_array[1]].color == "white"
-        @white_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
+        @white_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]].aspect)
       else
-        @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]])
+        @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]].aspect)
       end
       board[(finish_array[0]+number_forward)][finish_array[1]] = ' '
       en_passant_y = (finish.split('')[1].to_i - number_forward).to_s
@@ -472,12 +472,38 @@ array[6] = []
     end
   end
 
+  def load_game
+    save_file = "saved_game/save.txt"
+    saved_hash = JSON.load(File.read(save_file))
+    p saved_hash
+    @board = saved_hash["board"]
+    @current_player = current_player_from_json(saved_hash["current_player"])
+    @en_passant_target = saved_hash["en_passant_target"]
+    @black_pieces_lost = saved_hash["black_pieces_lost"]
+    @white_pieces_lost = saved_hash["white_pieces_lost"]
+    @black_positions = saved_hash["black_positions"]
+    @white_positions = saved_hash["white_positions"]
+    @king_check = saved_hash["king_check"]
+    p @current_player
+  end
+
+  def current_player_from_json(name)
+    name == "One" ? player1 : player2
+  end
+
+  #create serialize state of each of these attributes
+  # board: board,
+  # en_passant_target: en_passant_target,
+  # black_pieces_lost: black_pieces_lost,
+  # white_pieces_lost: white_pieces_lost,
+  # black_positions: black_positions,
+  # white_positions: white_positions,
+ 
+
   def serialize_state
     saved_data_hash = {
       board: board,
-      player2: player2,
-      player1: player1,
-      current_player: current_player,
+      current_player: current_player.name,
       en_passant_target: en_passant_target,
       black_pieces_lost: black_pieces_lost,
       white_pieces_lost: white_pieces_lost,
@@ -486,6 +512,36 @@ array[6] = []
       king_check: king_check
     }
     JSON.dump(saved_data_hash)
+  end
+
+  def choose_game_mode
+    #new or load and human or computer#
+    loop do
+      puts new_or_load
+      move_said = current_player.say_move
+      if move_said == "1"
+        pretty_board
+        game_loop
+        break
+      elsif move_said == "2"
+        load_game
+        pretty_board
+        display_pieces_lost
+        game_loop
+        break
+      end
+
+    end
+  end
+
+  def launch_game
+    save_file = 'saved_game/save.txt'
+    if File.exist?(save_file)
+      choose_game_mode 
+    else
+      pretty_board
+      game_loop
+    end
   end
 
   def game_loop
