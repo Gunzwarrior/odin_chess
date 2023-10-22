@@ -532,6 +532,19 @@ array[6] = []
     [type, hash]
   end
 
+  def serialize_board
+    #transform each element into a serialize piece array#
+    @board.map do |element|
+      element.map do |sub_element|
+        if sub_element == " "
+          " "
+        else
+          serialize_piece(sub_element)
+        end
+      end
+    end
+  end
+
   def choose_game_mode
     #new or load and human or computer#
     loop do
