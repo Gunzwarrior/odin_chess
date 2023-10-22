@@ -10,8 +10,8 @@ require_relative 'board'
 
 player1 = Player.new("One", "white")
 player2 = Player.new("Two", "black")
-
 board1 = Board.new(player1, player2)
+p board1.serialize_piece(board1.board[0][0])
 puts
 puts "The game is playable with two players"
 puts "The next big feature will be to be able"

@@ -512,6 +512,26 @@ array[6] = []
     JSON.dump(saved_data_hash)
   end
 
+  def serialize_piece(piece)
+    if piece.class == Rook
+      type = 'rook'
+    elsif piece.class == Bishop
+      type = 'bishop'
+    elsif piece.class == Queen
+      type = 'queen'
+    elsif piece.class == Pawn
+      type = 'pawn'
+    elsif piece.class == King
+      type = 'king'
+    elsif piece.class == Knight
+      type = 'knight'
+    end
+    hash = {color: piece.color,
+            never_moved: piece.never_moved
+    }
+    [type, hash]
+  end
+
   def choose_game_mode
     #new or load and human or computer#
     loop do

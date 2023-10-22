@@ -6,8 +6,9 @@ require_relative 'piece'
 class Knight < Piece
   attr_reader :aspect
 
-  def initialize(color)
+  def initialize(color, never_moved = true)
     super(color)
+    @never_moved = never_moved
     @aspect = setup_aspect
   end
 
