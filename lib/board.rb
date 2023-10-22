@@ -41,7 +41,7 @@ class Board
         end
       end
     end
-    board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true
+    board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true && real
     board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
     board[start_array[0]][start_array[1]] = ' '
     pretty_board if real
@@ -494,8 +494,6 @@ array[6] = []
   #create serialize state of each of these attributes
   # board: board,
   # en_passant_target: en_passant_target,
-  # black_pieces_lost: black_pieces_lost,
-  # white_pieces_lost: white_pieces_lost,
   # black_positions: black_positions,
   # white_positions: white_positions,
  

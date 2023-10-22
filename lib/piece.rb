@@ -5,8 +5,8 @@ class Piece
   attr_accessor :never_moved
   attr_reader :color
   
-  def initialize(player)
+  def initialize(player, never_moved = true)
     @color = player.color
-    @never_moved = true
+    @never_moved = never_moved
   end
 end
