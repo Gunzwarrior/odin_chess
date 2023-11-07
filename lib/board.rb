@@ -480,12 +480,20 @@ array[6] = []
     @en_passant_target = load_en_passant(saved_hash["en_passant_target"])
     @black_pieces_lost = saved_hash["black_pieces_lost"]
     @white_pieces_lost = saved_hash["white_pieces_lost"]
-    @black_positions = saved_hash["black_positions"]
-    @white_positions = saved_hash["white_positions"]
+    @black_positions = load_position(saved_hash["black_positions"])
+    @white_positions = load_position(saved_hash["white_positions"])
     @king_check = saved_hash["king_check"]
-    p @en_passant_target
     p @current_player
+    p @black_positions
+    puts
     p @board
+  end
+
+  def load_position(array)
+    array.map do |element|
+      temp_array = board_array(element[1])
+      [@board[temp_array[0]][temp_array[1]], element[1]]
+    end
   end
 
   def load_board(array)
@@ -520,9 +528,6 @@ array[6] = []
   # white_positions: white_positions,
 
   #create way to load :
-  #  en_passant_target
-  # black position
-  # white position
 
   def serialize_state
     saved_data_hash = {
