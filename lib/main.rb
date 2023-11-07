@@ -14,7 +14,5 @@ board1 = Board.new(player1, player2)
 puts
 puts "The game is playable with two players"
 puts "The next big feature will be to be able"
-puts "to save and load your game"
-p board1.board
-p board1.serialize_board
+puts "to play against an AI"
 board1.launch_game

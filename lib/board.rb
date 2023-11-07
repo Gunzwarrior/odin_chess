@@ -483,10 +483,6 @@ array[6] = []
     @black_positions = load_position(saved_hash["black_positions"])
     @white_positions = load_position(saved_hash["white_positions"])
     @king_check = saved_hash["king_check"]
-    p @current_player
-    p @black_positions
-    puts
-    p @board
   end
 
   def load_position(array)
@@ -521,13 +517,6 @@ array[6] = []
   def current_player_from_json(name)
     name == "One" ? player1 : player2
   end
-
-  #create serialize state of each of these attributes
-  # en_passant_target: en_passant_target,
-  # black_positions: black_positions,
-  # white_positions: white_positions,
-
-  #create way to load :
 
   def serialize_state
     saved_data_hash = {
