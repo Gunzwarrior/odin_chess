@@ -9,7 +9,11 @@ module Message
   end
 
   def player_prompt(player)
+    if player == "Computer"
+      "Computer > " 
+    else
     "Player #{player} > "
+    end
   end
 
   def wrong_text
