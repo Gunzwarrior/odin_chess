@@ -477,13 +477,15 @@ array[6] = []
     saved_hash = JSON.load(File.read(save_file))
     @board = load_board(saved_hash["board"])
     @current_player = current_player_from_json(saved_hash["current_player"])
-    @en_passant_target = saved_hash["en_passant_target"]
+    @en_passant_target = load_en_passant(saved_hash["en_passant_target"])
     @black_pieces_lost = saved_hash["black_pieces_lost"]
     @white_pieces_lost = saved_hash["white_pieces_lost"]
     @black_positions = saved_hash["black_positions"]
     @white_positions = saved_hash["white_positions"]
     @king_check = saved_hash["king_check"]
+    p @en_passant_target
     p @current_player
+    p @board
   end
 
   def load_board(array)
@@ -526,7 +528,7 @@ array[6] = []
     saved_data_hash = {
       board: serialize_board,
       current_player: current_player.name,
-      en_passant_target: en_passant_target,
+      en_passant_target: serialize_en_passant(@en_passant_target),
       black_pieces_lost: black_pieces_lost,
       white_pieces_lost: white_pieces_lost,
       black_positions: black_positions,
@@ -556,8 +558,19 @@ array[6] = []
     [type, hash]
   end
 
+  def serialize_en_passant(piece)
+    if @en_passant_target != nil
+      @board.each do |subarray|
+        subarray.each do |element|
+          if element == piece
+            return [board.index(subarray),subarray.index(element)]
+          end
+        end
+      end
+    end
+  end
+
   def serialize_board
-    #transform each element into a serialize piece array#
     @board.map do |element|
       element.map do |sub_element|
         if sub_element == " "
@@ -567,6 +580,10 @@ array[6] = []
         end
       end
     end
+  end
+
+  def load_en_passant(array)
+    board[array[0]][array[1]]
   end
 
   def choose_game_mode
