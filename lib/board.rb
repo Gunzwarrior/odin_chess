@@ -346,26 +346,26 @@ class Board
 
   def setup_board
     array = empty_board
-    array[0] = [Rook.new(player2),
-                Knight.new(player2),
-                Bishop.new(player2),
-                Queen.new(player2),
-                King.new(player2),
-                Bishop.new(player2),
-                Knight.new(player2),
-                Rook.new(player2)]
+    array[0] = [Rook.new(player2.color),
+                Knight.new(player2.color),
+                Bishop.new(player2.color),
+                Queen.new(player2.color),
+                King.new(player2.color),
+                Bishop.new(player2.color),
+                Knight.new(player2.color),
+                Rook.new(player2.color)]
     array[1] = []
-    8.times { array[1].push(Pawn.new(player2)) }
-    array[7] = [Rook.new(player1),
-      Knight.new(player1),
-      Bishop.new(player1),
-      Queen.new(player1),
-      King.new(player1),
-      Bishop.new(player1),
-      Knight.new(player1),
-      Rook.new(player1)]
+    8.times { array[1].push(Pawn.new(player2.color)) }
+    array[7] = [Rook.new(player1.color),
+      Knight.new(player1.color),
+      Bishop.new(player1.color),
+      Queen.new(player1.color),
+      King.new(player1.color),
+      Bishop.new(player1.color),
+      Knight.new(player1.color),
+      Rook.new(player1.color)]
 array[6] = []
-8.times { array[6].push(Pawn.new(player1)) }
+8.times { array[6].push(Pawn.new(player1.color)) }
     array
   end
 
@@ -399,16 +399,16 @@ array[6] = []
       end
       choice = gets.chomp
       if choice.downcase == 'queen'
-        board[promotion_spot[0]][promotion_spot[1]] = Queen.new(current_player)
+        board[promotion_spot[0]][promotion_spot[1]] = Queen.new(current_player.color)
         break
       elsif choice.downcase == 'bishop'
-        board[promotion_spot[0]][promotion_spot[1]] = Bishop.new(current_player)
+        board[promotion_spot[0]][promotion_spot[1]] = Bishop.new(current_player.color)
         break
       elsif choice.downcase == 'rook'
-        board[promotion_spot[0]][promotion_spot[1]] = Rook.new(current_player)
+        board[promotion_spot[0]][promotion_spot[1]] = Rook.new(current_player.color)
         break
       elsif choice.downcase == 'knight'
-        board[promotion_spot[0]][promotion_spot[1]] = Knight.new(current_player)
+        board[promotion_spot[0]][promotion_spot[1]] = Knight.new(current_player.color)
         break
       else
         first_prompt = false
@@ -475,8 +475,7 @@ array[6] = []
   def load_game
     save_file = "saved_game/save.txt"
     saved_hash = JSON.load(File.read(save_file))
-    p saved_hash
-    @board = saved_hash["board"]
+    @board = load_board(saved_hash["board"])
     @current_player = current_player_from_json(saved_hash["current_player"])
     @en_passant_target = saved_hash["en_passant_target"]
     @black_pieces_lost = saved_hash["black_pieces_lost"]
@@ -487,20 +486,45 @@ array[6] = []
     p @current_player
   end
 
+  def load_board(array)
+    array.map do |subarray|
+      subarray.map do |element|
+        if element[0] == " "
+          " "
+        elsif element[0] == "knight"
+          Knight.new(element[1]["color"], element[1]["never_moved"])
+        elsif element[0] == "rook"
+          Rook.new(element[1]["color"], element[1]["never_moved"])
+        elsif element[0] == "king"
+          King.new(element[1]["color"], element[1]["never_moved"])
+        elsif element[0] == "queen"
+          Queen.new(element[1]["color"], element[1]["never_moved"])
+        elsif element[0] == "pawn"
+          Pawn.new(element[1]["color"], element[1]["never_moved"])
+        elsif element[0] == "bishop"
+          Bishop.new(element[1]["color"], element[1]["never_moved"])
+        end
+      end
+    end
+  end
+
   def current_player_from_json(name)
     name == "One" ? player1 : player2
   end
 
   #create serialize state of each of these attributes
-  # board: board,
   # en_passant_target: en_passant_target,
   # black_positions: black_positions,
   # white_positions: white_positions,
- 
+
+  #create way to load :
+  #  en_passant_target
+  # black position
+  # white position
 
   def serialize_state
     saved_data_hash = {
-      board: board,
+      board: serialize_board,
       current_player: current_player.name,
       en_passant_target: en_passant_target,
       black_pieces_lost: black_pieces_lost,
