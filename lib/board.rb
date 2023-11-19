@@ -109,9 +109,9 @@ class Board
     go_one_step_sideway = (start_array[1]-finish_array[1]).abs == 1
     enemy_present = !empty?(finish) && board[finish_array[0]][finish_array[1]].color != board[start_array[0]][start_array[1]].color
     en_passant_move = go_forward && go_one_step_sideway && empty?(finish)
-    en_passant_pawn = board[(finish_array[0]+number_forward)][finish_array[1]]
+    en_passant_pawn = [start_array[0], finish_array[1]]
     if first_move_forward
-      @en_passant_target = board[start_array[0]][start_array[1]]
+      @en_passant_target = [finish_array[0], finish_array[1]]
       return true
     end
     return true if start[0] == finish[0] && go_forward && empty?(finish)
@@ -487,7 +487,7 @@ array[6] = []
     saved_hash = JSON.load(File.read(save_file))
     @board = load_board(saved_hash["board"])
     @current_player = current_player_from_json(saved_hash["current_player"])
-    @en_passant_target = load_en_passant(saved_hash["en_passant_target"])
+    @en_passant_target = saved_hash["en_passant_target"]
     @black_pieces_lost = saved_hash["black_pieces_lost"]
     @white_pieces_lost = saved_hash["white_pieces_lost"]
     @black_positions = load_position(saved_hash["black_positions"])
@@ -532,7 +532,7 @@ array[6] = []
     saved_data_hash = {
       board: serialize_board,
       current_player: current_player.name,
-      en_passant_target: serialize_en_passant(@en_passant_target),
+      en_passant_target: en_passant_target,
       black_pieces_lost: black_pieces_lost,
       white_pieces_lost: white_pieces_lost,
       black_positions: black_positions,
@@ -562,18 +562,6 @@ array[6] = []
     [type, hash]
   end
 
-  def serialize_en_passant(piece)
-    if @en_passant_target != nil
-      @board.each do |subarray|
-        subarray.each do |element|
-          if element == piece
-            return [board.index(subarray),subarray.index(element)]
-          end
-        end
-      end
-    end
-  end
-
   def serialize_board
     @board.map do |element|
       element.map do |sub_element|
@@ -586,12 +574,7 @@ array[6] = []
     end
   end
 
-  def load_en_passant(array)
-    board[array[0]][array[1]]
-  end
-
   def choose_game_mode
-    #new or load and human or computer#
     loop do
       puts new_or_load
       move_said = current_player.say_move
@@ -623,7 +606,6 @@ array[6] = []
   def game_loop
     puts intro
     loop do
-      p @en_passant_target
       print player_prompt(current_player.name)
       if current_player.name == "Computer"
         move_said = random_move(checkmate_array(current_player.color))
@@ -637,8 +619,9 @@ array[6] = []
       end
       if move_validation(move_said)
         move(move_said.split(' ')[0], move_said.split(' ')[1], true)
-        if en_passant_target == nil || current_player.color != @en_passant_target.color
-          @en_passant_target = nil
+        @en_passant_target = nil if en_passant_target == nil && en_passant_target == " "
+        if @en_passant_target != nil && board[@en_passant_target[0]][@en_passant_target[1]].respond_to?(:color)
+          @en_passant_target = nil if current_player.color != board[@en_passant_target[0]][@en_passant_target[1]].color
         end
         promotion(move_said) if pawn_promotable(move_said)
         update_pieces(move_said)
