@@ -391,28 +391,38 @@ array[6] = []
     move_array = move_said.split(' ')
     promotion_spot = board_array(move_array[1])
     first_prompt = true
-    loop do
-      if first_prompt
-        print promotion_prompt(current_player.name)
-      else
-        print player_prompt(current_player.name)
-      end
-      choice = gets.chomp
-      if choice.downcase == 'queen'
-        board[promotion_spot[0]][promotion_spot[1]] = Queen.new(current_player.color)
-        break
-      elsif choice.downcase == 'bishop'
-        board[promotion_spot[0]][promotion_spot[1]] = Bishop.new(current_player.color)
-        break
-      elsif choice.downcase == 'rook'
-        board[promotion_spot[0]][promotion_spot[1]] = Rook.new(current_player.color)
-        break
-      elsif choice.downcase == 'knight'
-        board[promotion_spot[0]][promotion_spot[1]] = Knight.new(current_player.color)
-        break
-      else
-        first_prompt = false
-        puts wrong_promotion
+    position = current_player == player1 ? white_positions : black_positions
+    position_index = find_position(position, move_array[0])
+    if current_player.name == "Computer"
+      ["queen", "bishop", "rook", "knight"].sample
+    else
+      loop do
+        if first_prompt
+          print promotion_prompt(current_player.name)
+        else
+          print player_prompt(current_player.name)
+        end
+        choice = gets.chomp
+        if choice.downcase == 'queen'
+          board[promotion_spot[0]][promotion_spot[1]] = Queen.new(current_player.color)
+          position[position_index][0] = board[promotion_spot[0]][promotion_spot[1]]
+          break
+        elsif choice.downcase == 'bishop'
+          board[promotion_spot[0]][promotion_spot[1]] = Bishop.new(current_player.color)
+          position[position_index][0] = board[promotion_spot[0]][promotion_spot[1]]
+          break
+        elsif choice.downcase == 'rook'
+          board[promotion_spot[0]][promotion_spot[1]] = Rook.new(current_player.color)
+          position[position_index][0] = board[promotion_spot[0]][promotion_spot[1]]
+          break
+        elsif choice.downcase == 'knight'
+          board[promotion_spot[0]][promotion_spot[1]] = Knight.new(current_player.color)
+          position[position_index][0] = board[promotion_spot[0]][promotion_spot[1]]
+          break
+        else
+          first_prompt = false
+          puts wrong_promotion
+        end
       end
     end
     pretty_board
@@ -613,8 +623,13 @@ array[6] = []
   def game_loop
     puts intro
     loop do
+      p @en_passant_target
       print player_prompt(current_player.name)
-      move_said = current_player.say_move
+      if current_player.name == "Computer"
+        move_said = random_move(checkmate_array(current_player.color))
+      else
+        move_said = current_player.say_move
+      end
       break if move_said == 'exit'
       if move_said == 'save'
         save_game
@@ -647,6 +662,17 @@ array[6] = []
       end
     end
   end  
+
+  def random_move(position_array)
+    position_array
+    random_index = rand(position_array.length)
+    random_piece = position_array[random_index][0]
+    random_second_index = rand(position_array[random_index][1].length)
+    random_move = position_array[random_index][1][random_second_index]
+    move = "#{random_piece} #{random_move}"
+    puts move
+    move
+  end
 
   def board_to_coordinates(array)
     x_hash = { a: 0, b: 1, c: 2, d: 3,
@@ -835,7 +861,7 @@ array[6] = []
   end
 
   def vulnerable_square?(square)
-    current_player == player1 ? array = black_positions : array = white_positions
+    @current_player.color == "white" ? array = black_positions : array = white_positions
     array.each do |element|
       unless element[0].class == Knight
         next if path_blocked?(element[1],square, false)
@@ -847,12 +873,9 @@ array[6] = []
   end
 
   def still_check(array)
-    temp_board = []
-    board.each { |element| temp_board.push(element.dup)}
-    temp_white_positions = []
-    white_positions.each { |element| temp_white_positions.push(element.dup)}
-    temp_black_positions = []
-    black_positions.each { |element| temp_black_positions.push(element.dup)}
+    temp_board = Marshal.load(Marshal.dump(board))
+    temp_white_positions = Marshal.load(Marshal.dump(white_positions))
+    temp_black_positions = Marshal.load(Marshal.dump(black_positions))
     move(array[0],array[1],false)
     update_pieces(array.join(' '))
     result = vulnerable_square?(find_king_position)
