@@ -1,18 +1,19 @@
 # frozen_string_literal: true
 
+# Handles every text displayed in the game
 module Message
   def intro
     <<~START
-    Start of the game
+      Start of the game
 
     START
   end
 
   def player_prompt(player)
-    if player == "Computer"
-      "Computer > " 
+    if player == 'Computer'
+      'Computer > '
     else
-    "Player #{player} > "
+      "Player #{player} > "
     end
   end
 
@@ -29,7 +30,7 @@ module Message
   end
 
   def empty_spot
-    "This square is empty"
+    'This square is empty'
   end
 
   def same_color
@@ -37,7 +38,7 @@ module Message
   end
 
   def path_is_blocked
-    "Your path is blocked"
+    'Your path is blocked'
   end
 
   def wrong_piece_move(piece)
@@ -49,19 +50,19 @@ module Message
   end
 
   def black_cemetary(array)
-    shape_array = array.map { |piece| piece.gsub(/[[:space:]]+/, "")}
-    print "  "
-    shape_array.join("")
+    shape_array = array.map { |piece| piece.gsub(/[[:space:]]+/, '') }
+    print '  '
+    shape_array.join('')
   end
 
   def white_cemetary(array)
-    shape_array = array.map { |piece| piece.gsub(/[[:space:]]+/, "")}
-    print "  "
-    shape_array.join("")
+    shape_array = array.map { |piece| piece.gsub(/[[:space:]]+/, '') }
+    print '  '
+    shape_array.join('')
   end
 
   def wrong_promotion
-    "Please enter Queen, Rook, Bishop or Knight for your promotion"
+    'Please enter Queen, Rook, Bishop or Knight for your promotion'
   end
 
   def check(color)
@@ -70,26 +71,25 @@ module Message
 
   def checkmate(color)
     if color == 'white'
-      "Checkmate, Black wins."
+      'Checkmate, Black wins.'
     else
-      "Checkmate, White wins."
+      'Checkmate, White wins.'
     end
   end
 
   def stalemate
-    "Draw, stalemate."
+    'Draw, stalemate.'
   end
 
   def wrong_check
-    "Incorrect move, King still in check"
+    'Incorrect move, King still in check'
   end
 
   def cannot_check
-    "Incorrect move, puts own King in check"
+    'Incorrect move, puts own King in check'
   end
 
   def new_or_load
-    "Enter 1 for a new game or 2 to load a previous game"
+    'Enter 1 for a new game or 2 to load a previous game'
   end
-
 end
