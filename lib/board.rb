@@ -44,6 +44,8 @@ class Board
     board[start_array[0]][start_array[1]].never_moved = false if board[start_array[0]][start_array[1]].never_moved == true && real
     board[finish_array[0]][finish_array[1]] = board[start_array[0]][start_array[1]]
     board[start_array[0]][start_array[1]] = ' '
+    print player_prompt(current_player.name) if current_player.name == "Computer" && real
+    puts "#{start} #{finish}" if current_player.name == "Computer" && real
     pretty_board if real
   end
 
@@ -117,7 +119,7 @@ class Board
     return true if start[0] == finish[0] && go_forward && empty?(finish)
     return true if go_forward && go_one_step_sideway && enemy_present
     if en_passant_move && en_passant_pawn == @en_passant_target
-      if board[(finish_array[0]+number_forward)][finish_array[1]].color == "white"
+      if board[(finish_array[0]+number_forward)][finish_array[1]].respond_to?(:color) && board[(finish_array[0]+number_forward)][finish_array[1]].color == "white"
         @white_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]].aspect)
       else
         @black_pieces_lost.push(board[(finish_array[0]+number_forward)][finish_array[1]].aspect)
@@ -299,7 +301,7 @@ class Board
 
     path.each do |element|
       unless board[element[0]][element[1]] == ' '
-      puts path_is_blocked if move
+      puts path_is_blocked if move && current_player.name != "Computer"
       return false
       end
     end
@@ -606,7 +608,7 @@ array[6] = []
   def game_loop
     puts intro
     loop do
-      print player_prompt(current_player.name)
+      print player_prompt(current_player.name) unless current_player.name == "Computer"
       if current_player.name == "Computer"
         move_said = random_move(checkmate_array(current_player.color))
       else
@@ -653,7 +655,6 @@ array[6] = []
     random_second_index = rand(position_array[random_index][1].length)
     random_move = position_array[random_index][1][random_second_index]
     move = "#{random_piece} #{random_move}"
-    puts move
     move
   end
 
@@ -837,7 +838,7 @@ array[6] = []
 
   def capture_same_color(string, check_test)
     if !empty?(string) && which_color(string) == current_player.color
-      puts same_color if check_test 
+      puts same_color if check_test unless current_player.name == "Computer"
       return true
     end
     false
@@ -890,14 +891,14 @@ array[6] = []
       return false if path_blocked?(move_array[0],move_array[1], true)
     end
     unless which_rule(which_piece(move_array[0]),move_array[0],move_array[1], never_moved?(move_array[0]))
-      puts wrong_piece_move(which_piece(move_array[0]))
+      puts wrong_piece_move(which_piece(move_array[0])) unless current_player.name == "Computer"
       return false
     end
     if still_check(move_array)
       if king_check
-        puts wrong_check
+        puts wrong_check unless current_player.name == "Computer"
       else
-        puts cannot_check
+        puts cannot_check unless current_player.name == "Computer"
       end
       return false
     end
